@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>פרבולה — y = ax² + bx + c</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--card:#fff;--bd:rgba(0,0,0,.11);
+  --blue:#185FA5;--blue-l:#E6F1FB;--blue-m:#378ADD;--blue-d:#0C447C;
+  --green:#3B6D11;--green-l:#EAF3DE;
+  --text:#2c2c2a;--muted:#6b6960;--hint:#9c9a92;
+  --par1:#185FA5;--par2:#993C1D;
+  --vcol:#D85A30;--yicol:#3B6D11;--xicol:#854F0B;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1b18;--card:#252420;--bd:rgba(255,255,255,.11);
+  --blue-l:#0d2a45;--green-l:#152810;
+  --text:#e8e6de;--muted:#b0aea6;--hint:#73726c;
+  --vcol:#EF9F27;--yicol:#9FE1CB;--xicol:#FAC775;
+}}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif}
+.app{padding:.6rem;direction:rtl;max-width:860px;margin:0 auto}
+.tabs{display:flex;gap:0;border-bottom:.5px solid var(--bd);margin-bottom:.8rem}
+.tab{padding:6px 13px;border:none;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue-m);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.par-layout{display:grid;grid-template-columns:1fr 230px;gap:10px;align-items:start}
+@media(max-width:540px){.par-layout{grid-template-columns:1fr}}
+.graph-card{background:var(--card);border:.5px solid var(--bd);border-radius:12px;overflow:hidden}
+canvas{width:100%;display:block}
+.formula-bar{padding:6px 12px 5px;border-bottom:.5px solid var(--bd)}
+.fgen{font-size:11px;color:var(--hint);margin-bottom:3px;text-align:right}
+.feq{display:flex;justify-content:flex-end;align-items:center;gap:2px;direction:ltr;flex-wrap:wrap;font-size:16px;font-weight:500;min-height:24px}
+.zoom-hint{text-align:center;font-size:10px;color:var(--hint);padding:3px;border-top:.5px solid var(--bd)}
+.drag-hint{text-align:center;font-size:10px;padding:3px;border-top:.5px solid var(--bd);background:rgba(213,90,48,.07);color:var(--vcol)}
+.card{background:var(--card);border:.5px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.clabel{font-size:10px;color:var(--hint);margin-bottom:6px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.sl-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.sl-row label{font-size:13px;font-weight:500;min-width:14px}
+.sl-row input[type=range]{flex:1;min-width:0}
+.slv{width:52px;height:28px;padding:0 5px;border:.5px solid var(--bd);border-radius:5px;font-size:13px;font-weight:500;color:var(--blue);background:var(--card);font-family:inherit;text-align:center;direction:ltr}
+.slv.p2{color:var(--par2);direction:ltr}
+.tog-item{display:flex;align-items:center;justify-content:space-between;padding:3px 0}
+.tog-lbl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tog{position:relative;width:28px;height:16px;flex-shrink:0}
+.tog input{opacity:0;position:absolute;inset:0;cursor:pointer;margin:0}
+.tog-track{position:absolute;inset:0;background:var(--bd);border-radius:99px;pointer-events:none;transition:background .2s}
+.tog input:checked+.tog-track{background:var(--blue)}
+.tog-thumb{position:absolute;top:2px;left:2px;width:12px;height:12px;background:#fff;border-radius:50%;pointer-events:none;transition:transform .2s}
+.tog input:checked~.tog-thumb{transform:translateX(12px)}
+.iitem{background:var(--bg);border-radius:7px;padding:4px 8px;display:flex;justify-content:space-between;margin-bottom:4px}
+.ilbl{font-size:11px;color:var(--muted)}.ival{font-size:11px;font-weight:500;direction:ltr}
+.divider{height:.5px;background:var(--bd);margin:8px 0}
+.p2hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.legend{display:flex;flex-wrap:wrap;gap:7px;margin-top:5px}
+.li{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.ll{width:14px;height:2.5px;border-radius:2px}
+.ld{width:9px;height:9px;border-radius:50%;border:2px solid currentColor}
+/* integer tab */
+.int-wrap{display:grid;grid-template-columns:280px 1fr;gap:12px;align-items:start}
+@media(max-width:500px){.int-wrap{grid-template-columns:1fr}}
+.int-graph-card{background:var(--card);border:.5px solid var(--bd);border-radius:12px;overflow:hidden}
+.int-controls{background:var(--card);border:.5px solid var(--bd);border-radius:12px;padding:14px 10px}
+.int-formula-area{display:flex;flex-direction:column;gap:12px;direction:ltr}
+.int-general-eq{font-size:15px;color:var(--hint);text-align:center;letter-spacing:.3px}
+.int-specific-eq{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:nowrap;overflow-x:auto}
+.ieq-sym{font-size:15px;font-weight:500;color:var(--text)}
+.ieq-op{font-size:15px;font-weight:500;color:var(--text);min-width:12px;text-align:center}
+.ieq-plus{color:var(--muted);font-size:14px;padding:0 1px}
+/* spinner boxes — clean black border */
+.spinner{display:inline-flex;flex-direction:column;align-items:center;border:1.5px solid var(--text);border-radius:6px;overflow:hidden;background:var(--card)}
+.sp-up,.sp-dn{width:44px;height:15px;border:none;background:var(--bg);color:var(--text);font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:background .1s;padding:0;line-height:1}
+.sp-up{border-bottom:.5px solid var(--bd)}
+.sp-dn{border-top:.5px solid var(--bd)}
+.sp-up:hover,.sp-dn:hover{background:var(--bd)}
+.sp-val{font-size:15px;font-weight:600;color:var(--text);padding:2px 4px;min-width:44px;text-align:center;line-height:1.35;background:var(--card)}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('graph',this)">גרף ומקדמים</button>
+  <button class="tab" onclick="switchTab('int',this)">מקדמים שלמים</button>
+</div>
+
+<!-- GRAPH TAB -->
+<div class="panel active" id="tab-graph">
+<div class="par-layout">
+  <div>
+    <div class="graph-card">
+      <div class="formula-bar">
+        <div class="fgen">y = ax² + bx + c</div>
+        <div class="feq" id="f1"></div>
+        <div class="feq" id="f2" style="display:none;margin-top:2px;opacity:.8"></div>
+      </div>
+      <canvas id="gc" height="320" style="cursor:crosshair"></canvas>
+      <div class="drag-hint">גרור את קודקוד הפרבולה (●) להזזה</div>
+      <div class="zoom-hint">גלגלת עכבר לזום · גרור הגרף להזזה</div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="clabel" style="color:var(--par1)">פרבולה 1</div>
+      <div class="sl-row"><label>a</label><input type="range" id="p1a-sl" min="-5" max="5" step="0.5" value="1" oninput="sync(1,'a','sl')"/><input class="slv" id="p1a-in" type="number" value="1" step="0.5" oninput="sync(1,'a','in')"/></div>
+      <div class="sl-row"><label>b</label><input type="range" id="p1b-sl" min="-8" max="8" step="0.5" value="0" oninput="sync(1,'b','sl')"/><input class="slv" id="p1b-in" type="number" value="0" step="0.5" oninput="sync(1,'b','in')"/></div>
+      <div class="sl-row"><label>c</label><input type="range" id="p1c-sl" min="-8" max="8" step="0.5" value="0" oninput="sync(1,'c','sl')"/><input class="slv" id="p1c-in" type="number" value="0" step="0.5" oninput="sync(1,'c','in')"/></div>
+      <div class="divider"></div>
+      <div class="clabel">נקודות מיוחדות</div>
+      <div class="tog-item"><div class="tog-lbl"><span class="tdot" style="background:var(--vcol)"></span>קודקוד</div><label class="tog"><input type="checkbox" id="tv1" checked onchange="draw()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+      <div class="tog-item"><div class="tog-lbl"><span class="tdot" style="background:var(--yicol)"></span>חיתוך עם ציר y</div><label class="tog"><input type="checkbox" id="ty1" checked onchange="draw()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+      <div class="tog-item"><div class="tog-lbl"><span class="tdot" style="background:var(--xicol)"></span>חיתוך עם ציר x</div><label class="tog"><input type="checkbox" id="tx1" checked onchange="draw()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+      <div class="tog-item"><div class="tog-lbl"><span class="tdot" style="background:rgba(55,138,221,.6)"></span>ציר סימטריה</div><label class="tog"><input type="checkbox" id="ts1" onchange="draw()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+      <div id="info1" style="margin-top:6px"></div>
+    </div>
+    <div class="card">
+      <div class="p2hdr"><div class="clabel" style="color:var(--par2);margin-bottom:0">פרבולה 2</div><label class="tog"><input type="checkbox" id="tog-p2" onchange="toggleP2()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+      <div id="p2-body" style="display:none">
+        <div class="sl-row"><label>a</label><input type="range" id="p2a-sl" min="-5" max="5" step="0.5" value="-1" oninput="sync(2,'a','sl')"/><input class="slv p2" id="p2a-in" type="number" value="-1" step="0.5" oninput="sync(2,'a','in')"/></div>
+        <div class="sl-row"><label>b</label><input type="range" id="p2b-sl" min="-8" max="8" step="0.5" value="0" oninput="sync(2,'b','sl')"/><input class="slv p2" id="p2b-in" type="number" value="0" step="0.5" oninput="sync(2,'b','in')"/></div>
+        <div class="sl-row"><label>c</label><input type="range" id="p2c-sl" min="-8" max="8" step="0.5" value="0" oninput="sync(2,'c','sl')"/><input class="slv p2" id="p2c-in" type="number" value="0" step="0.5" oninput="sync(2,'c','in')"/></div>
+        <div class="divider"></div>
+        <div class="clabel">נקודות מיוחדות</div>
+        <div class="tog-item"><div class="tog-lbl"><span class="tdot" style="background:var(--vcol)"></span>קודקוד</div><label class="tog"><input type="checkbox" id="tv2" onchange="draw()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+        <div class="tog-item"><div class="tog-lbl"><span class="tdot" style="background:var(--yicol)"></span>חיתוך y</div><label class="tog"><input type="checkbox" id="ty2" onchange="draw()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+        <div class="tog-item"><div class="tog-lbl"><span class="tdot" style="background:var(--xicol)"></span>חיתוך x</div><label class="tog"><input type="checkbox" id="tx2" onchange="draw()"><span class="tog-track"></span><span class="tog-thumb"></span></label></div>
+        <div id="info2" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- INTEGER TAB -->
+<div class="panel" id="tab-int">
+  <div class="int-wrap">
+    <!-- LEFT: formula + spinners -->
+    <div class="int-controls">
+      <div class="int-formula-area">
+        <!-- general -->
+        <div class="int-general-eq">y = ax² + bx + c</div>
+        <!-- specific with spinners -->
+        <div class="int-specific-eq" id="int-specific-eq">
+          <span class="ieq-sym">y =</span>
+          <div class="spinner" id="sp-a">
+            <button class="sp-up" onclick="stepC(1,'a',1)">▲</button>
+            <span class="sp-val" id="sp-a-val">1</span>
+            <button class="sp-dn" onclick="stepC(1,'a',-1)">▼</button>
+          </div>
+          <span class="ieq-sym" id="sym-xsq">x²</span><span class="ieq-sym ieq-plus">+</span>
+          <div class="spinner" id="sp-b">
+            <button class="sp-up" onclick="stepC(1,'b',1)">▲</button>
+            <span class="sp-val" id="sp-b-val">0</span>
+            <button class="sp-dn" onclick="stepC(1,'b',-1)">▼</button>
+          </div>
+          <span class="ieq-sym" id="sym-x">x</span><span class="ieq-sym ieq-plus">+</span>
+          <div class="spinner" id="sp-c">
+            <button class="sp-up" onclick="stepC(1,'c',1)">▲</button>
+            <span class="sp-val" id="sp-c-val">0</span>
+            <button class="sp-dn" onclick="stepC(1,'c',-1)">▼</button>
+          </div>
+        </div>
+      </div>
+      <div id="int-info1" style="margin-top:10px"></div>
+    </div>
+    <!-- RIGHT: graph -->
+    <div class="graph-card int-graph-card">
+      <canvas id="gc2" height="300" style="cursor:default"></canvas>
+      <div class="zoom-hint">גלגלת עכבר לזום</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+// DRAWING ENGINE — single rz per draw call
+// ════════════════════════════════════════
+
+// Resolve CSS custom properties for canvas use
+function getCSSColor(varName) {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+}
+// Cache colors (refreshed on each draw to support dark mode)
+function getColors() {
+  return {
+    vcol:  getCSSColor('--vcol')  || '#D85A30',
+    yicol: getCSSColor('--yicol') || '#3B6D11',
+    xicol: getCSSColor('--xicol') || '#854F0B',
+    par1:  getCSSColor('--par1')  || '#185FA5',
+    par2:  getCSSColor('--par2')  || '#993C1D',
+  };
+}
+const PAD={l:40,r:14,t:18,b:24};
+
+// Viewport state
+const vp1={cx:0,cy:0,hw:10,hh:8};
+const vp2={cx:0,cy:0,hw:10,hh:8};
+
+// Canvas wrappers — rz() does ONE scale setup
+function makeCanvas(id,fixedH){
+  const el=document.getElementById(id);
+  const ctx=el.getContext('2d');
+  let CW=400,CH=fixedH,DPR=1;
+
+  function rz(){
+    DPR=window.devicePixelRatio||1;
+    CW=Math.max(200,el.parentElement.clientWidth);
+    CH=fixedH;
+    el.width=CW*DPR;el.height=CH*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0); // fresh transform — no stacking
+  }
+
+  return{
+    el,ctx,
+    rz,
+    W:()=>CW-PAD.l-PAD.r,
+    H:()=>CH-PAD.t-PAD.b,
+    CW:()=>CW,
+    CH:()=>CH,
+  };
+}
+
+const C1=makeCanvas('gc',320);
+const C2=makeCanvas('gc2',300);
+
+// ── helpers ───────────────────────────────
+function syncHH(vp,C){vp.hh=vp.hw*(C.H()/C.W());}
+
+function toSX(vp,C,wx){return PAD.l+(wx-(vp.cx-vp.hw))/(2*vp.hw)*C.W();}
+function toSY(vp,C,wy){return PAD.t+((vp.cy+vp.hh)-wy)/(2*vp.hh)*C.H();}
+function toWX(vp,C,sx){return(vp.cx-vp.hw)+(sx-PAD.l)/C.W()*(2*vp.hw);}
+function toWY(vp,C,sy){return(vp.cy+vp.hh)-(sy-PAD.t)/C.H()*(2*vp.hh);}
+
+function getP(n,k){const v=parseFloat(document.getElementById(`p${n}${k}-in`).value);return isNaN(v)?0:v;}
+function setAllP(n,k,v){
+  v=Math.round(v*4)/4;
+  document.getElementById(`p${n}${k}-in`).value=v;
+  const sl=document.getElementById(`p${n}${k}-sl`);
+  if(sl)sl.value=Math.max(parseFloat(sl.min),Math.min(parseFloat(sl.max),v));
+}
+function fy(a,b,c,x){return a*x*x+b*x+c;}
+function fmtN(v){const r=Math.round(v*1000)/1000;if(Math.abs(r)<1e-9)return'0';if(r%1===0)return String(r);return r.toFixed(2).replace(/\.?0+$/,'');}
+
+function calcSP(a,b,c){
+  const vx=a?-b/(2*a):null,vy=vx!==null?fy(a,b,c,vx):null;
+  const disc=a?b*b-4*a*c:null;let xi=[];
+  if(a&&disc!==null){
+    if(Math.abs(disc)<1e-9)xi=[Math.round(-b/(2*a)*1000)/1000];
+    else if(disc>0){const sq=Math.sqrt(disc);xi=[Math.round((-b-sq)/(2*a)*1000)/1000,Math.round((-b+sq)/(2*a)*1000)/1000];}
+  } else if(!a&&b) xi=[Math.round(-c/b*1000)/1000];
+  return{vx:vx!==null?Math.round(vx*1000)/1000:null,vy:vy!==null?Math.round(vy*1000)/1000:null,xi,disc,yInt:Math.round(c*1000)/1000};
+}
+
+function fmtFormula(a,b,c,col){
+  function sn(s){return`<span style="font-size:15px;font-weight:500;color:var(--text);align-self:flex-end;padding-bottom:2px">${s}</span>`;}
+  function cv(v){return`<span style="font-size:17px;font-weight:500;color:${col};line-height:1">${fmtN(v)}</span>`;}
+  let p=[sn('y\u00a0=\u00a0')];
+  if(a!==0){if(a<0)p.push(sn('−'));if(Math.abs(a)!==1)p.push(cv(Math.abs(a)));p.push(sn('x²'));}
+  if(b!==0){p.push(sn(b>0&&a?' + ':b<0&&a?' − ':b<0?'−':''));if(Math.abs(b)!==1)p.push(cv(Math.abs(b)));p.push(sn('x'));}
+  if(c!==0||(a===0&&b===0)){p.push(sn(c>0&&(a||b)?' + ':c<0&&(a||b)?' − ':c<0?'−':''));p.push(cv(Math.abs(c)));}
+  if(!a&&!b&&!c)p.push(cv(0));
+  return p.join('');
+}
+
+function updInfo(id,sp,a){
+  const el=document.getElementById(id);if(!el)return;
+  function row(l,v){return`<div class="iitem"><span class="ilbl">${l}</span><span class="ival">${v}</span></div>`;}
+  let h='';
+  if(sp.vx!==null)h+=row('קודקוד',`(${fmtN(sp.vx)}, ${fmtN(sp.vy)})`);
+  h+=row('חיתוך עם ציר y',`(0, ${fmtN(sp.yInt)})`);
+  if(a){if(sp.disc<-1e-9)h+=row('חיתוך עם ציר x','אין (Δ < 0)');else if(sp.xi.length===1)h+=row('חיתוך עם ציר x',`(${fmtN(sp.xi[0])}, 0) — כפול`);else if(sp.xi.length===2)h+=row('חיתוך עם ציר x',`(${fmtN(sp.xi[0])}, 0)\u2002(${fmtN(sp.xi[1])}, 0)`);}
+  el.innerHTML=h;
+}
+
+// ── draw axes + grid ──────────────────────
+function getBestStep(span,n){return[.1,.2,.25,.5,1,2,2.5,5,10,20,25,50,100].find(s=>s>=span/n)||100;}
+
+function drawAxes(ctx,vp,C){
+  const W=C.W(),H=C.H();
+  const dk=matchMedia('(prefers-color-scheme:dark)').matches;
+  const gridC=dk?'rgba(255,255,255,.07)':'rgba(0,0,0,.055)';
+  const axC=dk?'rgba(255,255,255,.18)':'rgba(0,0,0,.14)';
+  const tc=dk?'rgba(200,198,190,.65)':'rgba(55,55,52,.65)';
+  const xMin=vp.cx-vp.hw,xMax=vp.cx+vp.hw,yMin=vp.cy-vp.hh,yMax=vp.cy+vp.hh;
+  const xSt=getBestStep(2*vp.hw,7),ySt=getBestStep(2*vp.hh,6);
+
+  ctx.strokeStyle=gridC;ctx.lineWidth=0.5;
+  let g=Math.ceil(xMin/xSt)*xSt;
+  while(g<=xMax+1e-9){ctx.beginPath();ctx.moveTo(toSX(vp,C,g),PAD.t);ctx.lineTo(toSX(vp,C,g),PAD.t+H);ctx.stroke();g=Math.round((g+xSt)*1e9)/1e9;}
+  g=Math.ceil(yMin/ySt)*ySt;
+  while(g<=yMax+1e-9){ctx.beginPath();ctx.moveTo(PAD.l,toSY(vp,C,g));ctx.lineTo(PAD.l+W,toSY(vp,C,g));ctx.stroke();g=Math.round((g+ySt)*1e9)/1e9;}
+
+  const ox=Math.max(PAD.l,Math.min(PAD.l+W,toSX(vp,C,0)));
+  const oy=Math.max(PAD.t,Math.min(PAD.t+H,toSY(vp,C,0)));
+  ctx.strokeStyle=axC;ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(ox,PAD.t);ctx.lineTo(ox,PAD.t+H);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(PAD.l,oy);ctx.lineTo(PAD.l+W,oy);ctx.stroke();
+
+  ctx.fillStyle=tc;ctx.font='9px system-ui';
+  g=Math.ceil(xMin/xSt)*xSt;
+  while(g<=xMax+1e-9){if(Math.abs(g)>xSt*.01){ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(fmtN(g),toSX(vp,C,g),Math.min(PAD.t+H+2,oy+2));}g=Math.round((g+xSt)*1e9)/1e9;}
+  g=Math.ceil(yMin/ySt)*ySt;
+  while(g<=yMax+1e-9){if(Math.abs(g)>ySt*.01){ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(fmtN(g),Math.min(ox-3,PAD.l-2),toSY(vp,C,g));}g=Math.round((g+ySt)*1e9)/1e9;}
+
+  ctx.strokeStyle=axC;ctx.lineWidth=1;
+  const W2=C.W();
+  ctx.beginPath();ctx.moveTo(PAD.l+W2-2,oy-4);ctx.lineTo(PAD.l+W2+5,oy);ctx.lineTo(PAD.l+W2-2,oy+4);ctx.stroke();
+  ctx.fillStyle=tc;ctx.font='11px system-ui';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('x',PAD.l+W2+7,oy);
+  ctx.beginPath();ctx.moveTo(ox-4,PAD.t+2);ctx.lineTo(ox,PAD.t-5);ctx.lineTo(ox+4,PAD.t+2);ctx.stroke();
+  ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('y',ox,PAD.t-6);
+  ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText('0',ox-2,oy+2);
+}
+
+function drawCurve(ctx,vp,C,a,b,c,col){
+  const xMin=vp.cx-vp.hw,xMax=vp.cx+vp.hw,PH=C.H();
+  ctx.beginPath();ctx.strokeStyle=col;ctx.lineWidth=2.2;
+  let first=true;
+  for(let i=0;i<=400;i++){
+    const wx=xMin+(xMax-xMin)*i/400;
+    const wy=fy(a,b,c,wx);
+    const sy=toSY(vp,C,wy);
+    if(sy<PAD.t-6||sy>PAD.t+PH+6){first=true;continue;}
+    if(first){ctx.moveTo(toSX(vp,C,wx),sy);first=false;}
+    else ctx.lineTo(toSX(vp,C,wx),sy);
+  }
+  ctx.stroke();
+}
+
+function drawDot(ctx,vp,C,wx,wy,col,r,lbl,hover){
+  const sx=toSX(vp,C,wx),sy=toSY(vp,C,wy);
+  const PW=C.W(),PH=C.H();
+  if(sx<PAD.l-14||sx>PAD.l+PW+14||sy<PAD.t-14||sy>PAD.t+PH+14)return;
+  const dk=matchMedia('(prefers-color-scheme:dark)').matches;
+  if(hover){ctx.beginPath();ctx.arc(sx,sy,r+5,0,Math.PI*2);ctx.fillStyle='rgba(213,90,48,.18)';ctx.fill();}
+  // hollow dot
+  ctx.beginPath();ctx.arc(sx,sy,r,0,Math.PI*2);
+  ctx.fillStyle=dk?'rgba(28,27,24,.88)':'rgba(255,255,255,.9)';ctx.fill();
+  ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(sx,sy,r-3,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+  if(!lbl)return;
+  let tx=sx,ty=sy-r-7,ta='center',tb='bottom';
+  if(sx<PAD.l+65){tx=sx+r+7;ta='left';ty=sy;tb='middle';}
+  else if(sx>PAD.l+PW-65){tx=sx-r-7;ta='right';ty=sy;tb='middle';}
+  else if(sy<PAD.t+24){ty=sy+r+7;tb='top';}
+  ctx.font='bold 10px system-ui';
+  const tw=ctx.measureText(lbl).width;
+  ctx.fillStyle=dk?'rgba(28,27,24,.85)':'rgba(255,255,255,.9)';
+  const bx=ta==='left'?tx:ta==='right'?tx-tw-8:tx-tw/2-4;
+  ctx.beginPath();ctx.roundRect(bx,ty-(tb==='top'?0:tb==='middle'?7:14),tw+8,14,3);ctx.fill();
+  ctx.fillStyle=col;ctx.textAlign=ta;ctx.textBaseline=tb;ctx.fillText(lbl,tx,ty);
+}
+
+function drawSpecial(ctx,vp,C,sp,a,n,hV,cols){
+  if(!cols) cols=getColors();
+  const PW=C.W(),PH=C.H();
+  if(document.getElementById(`ts${n}`)?.checked&&sp.vx!==null){
+    const sx=toSX(vp,C,sp.vx);
+    if(sx>=PAD.l&&sx<=PAD.l+PW){
+      ctx.strokeStyle='rgba(55,138,221,.35)';ctx.lineWidth=1;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(sx,PAD.t);ctx.lineTo(sx,PAD.t+PH);ctx.stroke();ctx.setLineDash([]);
+    }
+  }
+  if(document.getElementById(`ty${n}`)?.checked)
+    drawDot(ctx,vp,C,0,sp.yInt,cols.yicol,6,`(0, ${fmtN(sp.yInt)})`,false);
+  if(document.getElementById(`tx${n}`)?.checked)
+    sp.xi.forEach(x=>drawDot(ctx,vp,C,x,0,cols.xicol,6,`(${fmtN(x)}, 0)`,false));
+  if(document.getElementById(`tv${n}`)?.checked&&sp.vx!==null)
+    drawDot(ctx,vp,C,sp.vx,sp.vy,cols.vcol,8,`(${fmtN(sp.vx)}, ${fmtN(sp.vy)})`,hV);
+}
+
+// ── MAIN DRAW ─────────────────────────────
+function draw(hV1=false){
+  C1.rz(); // ONE rz call sets up transform fresh
+  syncHH(vp1,C1);
+  C1.ctx.clearRect(0,0,C1.CW(),C1.CH());
+  drawAxes(C1.ctx,vp1,C1);
+
+  const cols=getColors();
+  const a1=getP(1,'a'),b1=getP(1,'b'),c1=getP(1,'c');
+  drawCurve(C1.ctx,vp1,C1,a1,b1,c1,cols.par1);
+
+  const p2=document.getElementById('tog-p2').checked;
+  if(p2){
+    const a2=getP(2,'a'),b2=getP(2,'b'),c2=getP(2,'c');
+    drawCurve(C1.ctx,vp1,C1,a2,b2,c2,cols.par2);
+    const sp2=calcSP(a2,b2,c2);
+    drawSpecial(C1.ctx,vp1,C1,sp2,a2,2,false,cols);
+    updInfo('info2',sp2,a2);
+  }
+
+  const sp1=calcSP(a1,b1,c1);
+  drawSpecial(C1.ctx,vp1,C1,sp1,a1,1,hV1,cols);
+  updInfo('info1',sp1,a1);
+
+  document.getElementById('f1').innerHTML=fmtFormula(a1,b1,c1,'var(--par1)');
+  document.getElementById('f2').style.display=p2?'flex':'none';
+  if(p2)document.getElementById('f2').innerHTML=fmtFormula(getP(2,'a'),getP(2,'b'),getP(2,'c'),'var(--par2)');
+
+  document.getElementById('legend').innerHTML=
+    `<span class="li"><span class="ll" style="background:var(--par1)"></span>פרבולה 1</span>`+
+    (p2?`<span class="li"><span class="ll" style="background:var(--par2)"></span>פרבולה 2</span>`:'')+
+    `<span class="li"><span class="ld" style="color:${cols.vcol};border-color:${cols.vcol}"></span>קודקוד</span>`+
+    `<span class="li"><span class="ld" style="color:${cols.yicol};border-color:${cols.yicol}"></span>חיתוך y</span>`+
+    `<span class="li"><span class="ld" style="color:${cols.xicol};border-color:${cols.xicol}"></span>חיתוך x</span>`;
+}
+
+function drawInt(){
+  C2.rz(); // ONE rz call
+  syncHH(vp2,C2);
+  C2.ctx.clearRect(0,0,C2.CW(),C2.CH());
+  drawAxes(C2.ctx,vp2,C2);
+  const a=getP(1,'a'),b=getP(1,'b'),c=getP(1,'c');
+  const cols2=getColors();
+  drawCurve(C2.ctx,vp2,C2,a,b,c,cols2.par1);
+  const sp=calcSP(a,b,c);
+  if(sp.vx!==null)drawDot(C2.ctx,vp2,C2,sp.vx,sp.vy,cols2.vcol,6,null,false);
+  drawDot(C2.ctx,vp2,C2,0,sp.yInt,cols2.yicol,5,null,false);
+  sp.xi.forEach(x=>drawDot(C2.ctx,vp2,C2,x,0,cols2.xicol,5,null,false));
+  updInfo('int-info1',sp,a);
+  // 'if1' no longer exists in int tab
+  updIntDisplay();
+}
+
+function updIntDisplay(){
+  const a  = getP(1,'a');
+  const b  = getP(1,'b');
+  const cv = getP(1,'c');
+  const sa = document.getElementById('sp-a-val');
+  const sb = document.getElementById('sp-b-val');
+  const sc = document.getElementById('sp-c-val');
+  // Sign lives inside the box: "−3" or "2"
+  if(sa) sa.textContent = (a  < 0 ? '−' : '') + Math.abs(a);
+  if(sb) sb.textContent = (b  < 0 ? '−' : '') + Math.abs(b);
+  if(sc) sc.textContent = (cv < 0 ? '−' : '') + Math.abs(cv);
+}
+
+function stepC(n,k,d){
+  let v=Math.round(getP(n,k))+d;
+  // For 'a': skip zero (parabola needs a≠0)
+  if(k==='a'&&v===0) v=d>0?1:-1;
+  setAllP(n,k,v);
+  draw();drawInt();
+}
+
+function sync(n,k,src){
+  const sl=document.getElementById(`p${n}${k}-sl`),inp=document.getElementById(`p${n}${k}-in`);
+  if(src==='sl')inp.value=sl.value;
+  else{let v=parseFloat(inp.value);if(isNaN(v))return;sl.value=Math.max(parseFloat(sl.min),Math.min(parseFloat(sl.max),v));}
+  draw();drawInt();
+}
+function toggleP2(){document.getElementById('p2-body').style.display=document.getElementById('tog-p2').checked?'block':'none';draw();}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>id==='graph'?draw():drawInt(),20);
+}
+
+// ── VERTEX DRAG ───────────────────────────
+const VHIT=16;let dragging=false,panning=false,panStart=null,vpPan=null,hovV=false;
+
+function getCanvasXY(e){
+  const r=C1.el.getBoundingClientRect(),t=e.touches?e.touches[0]:e;
+  return{sx:(t.clientX-r.left)*(C1.CW()/r.width),sy:(t.clientY-r.top)*(C1.CH()/r.height)};
+}
+function getVertexSXY(){
+  const a=getP(1,'a');if(!a)return null;
+  const vx=-getP(1,'b')/(2*a),vy=fy(a,getP(1,'b'),getP(1,'c'),vx);
+  return{sx:toSX(vp1,C1,vx),sy:toSY(vp1,C1,vy)};
+}
+function nearVertex(sx,sy){
+  if(!document.getElementById('tv1').checked)return false;
+  const v=getVertexSXY();return v&&Math.hypot(sx-v.sx,sy-v.sy)<VHIT;
+}
+function dragToWorld(sx,sy){
+  const a=getP(1,'a');if(!a)return;
+  const wx=toWX(vp1,C1,sx),wy=toWY(vp1,C1,sy);
+  const nb=-2*a*wx,nc=wy+nb*nb/(4*a);
+  setAllP(1,'b',nb);setAllP(1,'c',nc);
+}
+
+C1.el.addEventListener('mousemove',e=>{
+  const{sx,sy}=getCanvasXY(e);
+  if(dragging){dragToWorld(sx,sy);draw(true);drawInt();return;}
+  if(panning&&panStart){
+    vp1.cx=vpPan.cx-(sx-panStart.sx)/C1.W()*(2*vp1.hw);
+    vp1.cy=vpPan.cy+(sy-panStart.sy)/C1.H()*(2*vp1.hh);
+    draw();return;
+  }
+  const nv=nearVertex(sx,sy);
+  if(nv!==hovV){hovV=nv;C1.el.style.cursor=nv?'grab':'crosshair';draw(nv);}
+});
+C1.el.addEventListener('mousedown',e=>{
+  const{sx,sy}=getCanvasXY(e);
+  if(nearVertex(sx,sy)){dragging=true;C1.el.style.cursor='grabbing';}
+  else{panning=true;panStart={sx,sy};vpPan={cx:vp1.cx,cy:vp1.cy};}
+});
+C1.el.addEventListener('mouseup',()=>{dragging=false;panning=false;C1.el.style.cursor=hovV?'grab':'crosshair';});
+C1.el.addEventListener('mouseleave',()=>{dragging=false;panning=false;});
+
+C1.el.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const{sx,sy}=getCanvasXY(e);
+  const wxB=toWX(vp1,C1,sx),wyB=toWY(vp1,C1,sy);
+  vp1.hw=Math.max(.5,Math.min(500,vp1.hw*(e.deltaY>0?1.15:1/1.15)));
+  syncHH(vp1,C1);
+  vp1.cx+=wxB-toWX(vp1,C1,sx);vp1.cy+=wyB-toWY(vp1,C1,sy);
+  draw();
+},{passive:false});
+
+C2.el.addEventListener('wheel',e=>{
+  e.preventDefault();
+  vp2.hw=Math.max(.5,Math.min(500,vp2.hw*(e.deltaY>0?1.15:1/1.15)));
+  syncHH(vp2,C2);drawInt();
+},{passive:false});
+
+// touch
+let td=false,tp=null,tpVp=null,tpDist=null;
+C1.el.addEventListener('touchstart',e=>{e.preventDefault();if(e.touches.length===1){const{sx,sy}=getCanvasXY(e);if(nearVertex(sx,sy))td=true;else{tp={sx,sy};tpVp={cx:vp1.cx,cy:vp1.cy};}}if(e.touches.length===2)tpDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:false});
+C1.el.addEventListener('touchmove',e=>{e.preventDefault();if(e.touches.length===1&&td){const{sx,sy}=getCanvasXY(e);dragToWorld(sx,sy);draw(true);drawInt();}else if(e.touches.length===1&&tp){const{sx,sy}=getCanvasXY(e);vp1.cx=tpVp.cx-(sx-tp.sx)/C1.W()*(2*vp1.hw);vp1.cy=tpVp.cy+(sy-tp.sy)/C1.H()*(2*vp1.hh);draw();}else if(e.touches.length===2&&tpDist){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);vp1.hw=Math.max(.5,Math.min(500,vp1.hw*(tpDist/d)));syncHH(vp1,C1);tpDist=d;draw();}},{passive:false});
+C1.el.addEventListener('touchend',()=>{td=false;tp=null;tpDist=null;});
+
+// embed
+if(window.self!==window.top){
+  window.parent.postMessage({type:'READY'},'*');
+  window.addEventListener('message',e=>{const m=e.data;if(m?.type==='SET_PARABOLA'){if(m.a!==undefined)setAllP(1,'a',m.a);if(m.b!==undefined)setAllP(1,'b',m.b);if(m.c!==undefined)setAllP(1,'c',m.c);draw();drawInt();}});
+}
+
+window.addEventListener('resize',()=>{draw();drawInt();});
+draw();drawInt();
+</script>
+</body>
+</html>
