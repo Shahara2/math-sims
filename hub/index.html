@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>מרכז סימולציות מתמטיקה</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#f5f4f0;--card:#fff;--border:#e2e0d8;
+      --blue:#185FA5;--blue-light:#E6F1FB;--blue-mid:#378ADD;
+      --green:#3B6D11;--green-light:#EAF3DE;
+      --coral:#993C1D;--coral-light:#FAECE7;
+      --text:#2c2c2a;--muted:#6b6960;--hint:#9c9a92;
+    }
+    @media(prefers-color-scheme:dark){
+      :root{--bg:#1c1b18;--card:#252420;--border:#3a3830;
+        --text:#e8e6de;--muted:#b0aea6;--hint:#73726c;
+        --blue-light:#0d2a45;--green-light:#152810;--coral-light:#2a1208}
+    }
+    body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+    header{background:var(--card);border-bottom:1px solid var(--border);padding:20px 28px;display:flex;align-items:center;gap:14px}
+    .logo{width:42px;height:42px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;flex-shrink:0}
+    header h1{font-size:19px;font-weight:500}
+    header p{font-size:12px;color:var(--muted);margin-top:2px}
+    main{max-width:900px;margin:0 auto;padding:28px 20px}
+    .section-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--hint);margin-bottom:14px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-bottom:36px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color .15s,transform .1s}
+    .card:hover{border-color:var(--blue-mid);transform:translateY(-1px)}
+    .card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+    .i-blue{background:var(--blue-light)} .i-green{background:var(--green-light)} .i-coral{background:var(--coral-light)}
+    .card-title{font-size:14px;font-weight:500}
+    .card-desc{font-size:12px;color:var(--muted);line-height:1.6}
+    .tags{display:flex;gap:4px;flex-wrap:wrap}
+    .tag{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:500}
+    .t-blue{background:var(--blue-light);color:var(--blue)}
+    .t-green{background:var(--green-light);color:var(--green)}
+    .t-coral{background:var(--coral-light);color:var(--coral)}
+    .card-arrow{font-size:12px;color:var(--blue-mid);align-self:flex-end;margin-top:auto}
+
+    /* Modal */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:16px}
+    .modal-bg.open{display:flex}
+    .modal{background:var(--card);border-radius:14px;width:100%;max-width:980px;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100vh - 32px)}
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .modal-title{font-size:13px;font-weight:500}
+    .hdr-btns{display:flex;gap:5px}
+    .hdr-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;font-size:11px;cursor:pointer;color:var(--muted);font-family:inherit}
+    .hdr-btn:hover{background:var(--border)}
+    .modal-iframe{width:100%;height:560px;border:none;display:block}
+    footer{text-align:center;padding:20px;font-size:11px;color:var(--hint);border-top:1px solid var(--border)}
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">∑</div>
+  <div>
+    <h1>מרכז סימולציות מתמטיקה</h1>
+    <p>כלים אינטראקטיביים להוראת מתמטיקה</p>
+  </div>
+</header>
+
+<main>
+  <p class="section-label">אלגברה</p>
+  <div class="grid">
+    <div class="card" onclick="open_sim('trig','טריגונומטריה במשולש ישר זווית')">
+      <div class="card-icon i-blue">
+        <svg width="26" height="22" viewBox="0 0 26 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="2,20 24,20 2,2" fill="none" stroke="#185FA5" stroke-width="2.2" stroke-linejoin="round"/>
+          <polyline points="2,10 6,10 6,20" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="card-title">טריגונומטריה במשולש ישר זווית</div>
+      <div class="card-desc">חקירת sin, cos, tan — זיהוי צלעות, בחירת פונקציה, בניית משוואה ופתרון מדורג.</div>
+      <div class="tags"><span class="tag t-blue">טריגונומטריה</span></div>
+      <div class="card-arrow">פתח →</div>
+    </div>
+    <div class="card" onclick="open_sim('equations','משוואה בנעלם אחד')">
+      <div class="card-icon i-blue">⚖</div>
+      <div class="card-title">משוואה בנעלם אחד</div>
+      <div class="card-desc">פתרון משוואה ממעלה ראשונה בשיטת המאזניים — פעולות על שני אגפים עם אנימציה ויומן פתרון.</div>
+      <div class="tags"><span class="tag t-blue">אלגברה</span></div>
+      <div class="card-arrow">פתח →</div>
+    </div>
+    <div class="card" onclick="open_sim('parabola','פרבולה — y = ax² + bx + c')">
+      <div class="card-icon i-green">∪</div>
+      <div class="card-title">פרבולה</div>
+      <div class="card-desc">שליטה במקדמים, גרירת הקודקוד, נקודות חיתוך, ציר סימטריה, שתי פרבולות.</div>
+      <div class="tags"><span class="tag t-green">פונקציות</span></div>
+      <div class="card-arrow">פתח →</div>
+    </div>
+  </div>
+
+  <p class="section-label">גאומטריה ומרחב</p>
+  <div class="grid">
+    <div class="card" onclick="open_sim('cubes','ראיה מרחבית — קוביות')">
+      <div class="card-icon i-coral">⬛</div>
+      <div class="card-title">ראיה מרחבית</div>
+      <div class="card-desc">בניית סידורי קוביות, מבטים מכיוונים שונים, תרשים מספרים, סיבוב חופשי.</div>
+      <div class="tags"><span class="tag t-coral">מרחב</span></div>
+      <div class="card-arrow">פתח →</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="modal-bg" id="modal" onclick="bg_click(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="modal-title"></span>
+      <div class="hdr-btns">
+        <button class="hdr-btn" onclick="open_tab()">פתח בלשונית ↗</button>
+        <button class="hdr-btn" onclick="close_modal()">✕</button>
+      </div>
+    </div>
+    <iframe class="modal-iframe" id="modal-frame" title="סימולציה" allow="fullscreen"></iframe>
+  </div>
+</div>
+
+<footer>כל הסימולציות פתוחות לשימוש חינוכי חופשי · <a href="https://github.com/YOUR_USERNAME" style="color:inherit">GitHub</a></footer>
+
+<script>
+const URLS = {
+  equations: '../apps/equations/index.html',
+  parabola:  '../apps/parabola/index.html',
+  cubes:     'https://Shahara2.github.io/cube-sim/',
+  trig:      '../apps/trig/index.html',
+};
+let cur = '';
+function open_sim(id, title) {
+  cur = URLS[id];
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-frame').src = cur;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function close_modal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modal-frame').src = '';
+  document.body.style.overflow = '';
+  cur = '';
+}
+function bg_click(e) { if (e.target === document.getElementById('modal')) close_modal(); }
+function open_tab() { if (cur) window.open(cur, '_blank'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') close_modal(); });
+</script>
+</body>
+</html>
