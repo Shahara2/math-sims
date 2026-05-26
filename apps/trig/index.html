@@ -5,515 +5,766 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>טריגונומטריה במשולש ישר זווית</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f4f0; color: #1a1a1a; direction: rtl; }
-.sim-wrap { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
-h1 { font-size: 20px; font-weight: 600; margin-bottom: 1.25rem; }
-.tabs { display: flex; gap: 6px; margin-bottom: 1.25rem; border-bottom: 1.5px solid #ddd; }
-.tab-btn { padding: 9px 22px; border: none; background: none; font-size: 14px; font-weight: 500; cursor: pointer; color: #666; border-bottom: 2.5px solid transparent; margin-bottom: -1.5px; transition: all 0.15s; }
-.tab-btn.active { color: #534AB7; border-bottom-color: #534AB7; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.card { background: #fff; border: 1px solid #e8e6e0; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
-.triangle-area { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-start; }
-.controls { flex: 1; min-width: 210px; }
-.slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.slider-row label { font-size: 13px; color: #666; min-width: 80px; }
-.slider-row input[type=range] { flex: 1; accent-color: #534AB7; }
-.slider-val { font-size: 13px; font-weight: 600; min-width: 38px; color: #534AB7; }
-.angle-selector { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-.angle-btn { padding: 6px 14px; border: 1px solid #ccc; border-radius: 8px; background: none; font-size: 13px; cursor: pointer; color: #444; transition: all 0.15s; }
-.angle-btn.sel { background: #EEEDFE; border-color: #7F77DD; color: #3C3489; font-weight: 500; }
-.trig-table { background: #f9f8f5; border-radius: 8px; padding: 10px; margin-top: 10px; }
-.trig-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; border-bottom: 1px solid #ece9e0; }
-.trig-row:last-child { border-bottom: none; }
-.trig-label { color: #555; }
-.trig-val { font-weight: 600; font-family: 'Courier New', monospace; color: #534AB7; font-size: 12px; }
-.legend-box { border: 1px solid #e8e6e0; border-radius: 8px; padding: 8px 12px; margin-top: 8px; font-size: 12px; background: #fff; }
-.legend-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
-.lsw { display: inline-block; width: 24px; height: 4px; border-radius: 2px; flex-shrink: 0; }
-/* Exercise */
-.prob-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
-.prob-btn { padding: 7px 14px; border: 1px solid #ccc; border-radius: 8px; background: none; font-size: 13px; cursor: pointer; color: #444; transition: all 0.15s; }
-.prob-btn.active { background: #EEEDFE; border-color: #7F77DD; color: #3C3489; font-weight: 500; }
-.ex-layout { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start; }
-.ex-steps { flex: 1; min-width: 270px; }
-.progress-dots { display: flex; gap: 6px; margin-bottom: 12px; align-items: center; }
-.dot-step { width: 9px; height: 9px; border-radius: 50%; background: #ddd; transition: background 0.2s; }
-.dot-step.done { background: #3B6D11; }
-.dot-step.active { background: #534AB7; }
-.step-box { border: 1px solid #e8e6e0; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
-.step-hdr { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f9f8f5; }
-.step-num { width: 26px; height: 26px; border-radius: 50%; background: #e8e6e0; color: #666; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.step-num.active { background: #534AB7; color: #fff; }
-.step-num.done { background: #EAF3DE; color: #3B6D11; }
-.step-title { font-size: 14px; font-weight: 500; flex: 1; }
-.step-body { padding: 14px; display: none; }
-.step-body.open { display: block; }
-.q-label { font-size: 13px; color: #555; margin-bottom: 8px; }
-.side-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
-.side-btn { padding: 9px 22px; border: 1.5px solid #ccc; border-radius: 8px; background: none; font-size: 16px; font-weight: 700; cursor: pointer; color: #333; font-family: 'Courier New', monospace; transition: all 0.15s; min-width: 54px; text-align: center; }
-.side-btn:hover:not(:disabled) { background: #f0eeff; border-color: #7F77DD; }
-.side-btn.correct { background: #EAF3DE; border-color: #3B6D11; color: #27500A; }
-.side-btn.wrong { background: #FCEBEB; border-color: #A32D2D; color: #791F1F; }
-.fb { padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-top: 6px; line-height: 1.5; }
-.fb.ok { background: #EAF3DE; color: #27500A; }
-.fb.err { background: #FCEBEB; color: #791F1F; }
-.fb.info { background: #E6F1FB; color: #0C447C; }
-.func-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-.func-btn { padding: 10px 16px; border: 1px solid #ccc; border-radius: 8px; background: none; font-size: 13px; cursor: pointer; color: #333; transition: all 0.15s; }
-.func-btn:hover:not(:disabled) { background: #f0eeff; }
-.func-btn.correct { background: #EAF3DE; border-color: #3B6D11; color: #27500A; }
-.func-btn.wrong { background: #FCEBEB; border-color: #A32D2D; color: #791F1F; }
-.eq-box { background: #f9f8f5; border-radius: 8px; padding: 16px; margin: 10px 0; font-size: 18px; font-family: 'Courier New', monospace; text-align: center; direction: ltr; }
-.eq-x { color: #534AB7; font-weight: 700; }
-.solve-step { padding: 9px 14px; border-right: 3px solid #e8e6e0; margin-bottom: 6px; font-size: 14px; font-family: 'Courier New', monospace; direction: ltr; text-align: left; background: #fff; border-radius: 0 8px 8px 0; }
-.solve-step.shown { border-right-color: #534AB7; background: #faf9ff; }
-.solve-step .slabel { font-family: 'Segoe UI',Arial,sans-serif; font-size: 11px; color: #888; direction: rtl; display: block; margin-bottom: 2px; }
-.solve-step.last-shown { border-right-color: #3B6D11; background: #f4fbee; font-weight: 600; color: #27500A; }
-.next-btn { padding: 9px 20px; background: #534AB7; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 10px; transition: opacity 0.15s; }
-.next-btn:disabled { opacity: 0.35; cursor: default; }
-.next-btn:hover:not(:disabled) { opacity: 0.85; }
-.reveal-btn { padding: 9px 20px; background: #fff; color: #534AB7; border: 1px solid #534AB7; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 10px; }
-.reveal-btn:hover { background: #EEEDFE; }
-.success-box { background: #EAF3DE; border: 1px solid #639922; border-radius: 10px; padding: 16px; text-align: center; color: #27500A; font-size: 15px; font-weight: 600; margin-top: 10px; line-height: 1.7; }
-.success-box span { font-size: 13px; font-weight: 400; display: block; margin-top: 4px; color: #3B6D11; }
-/* Custom tab */
-.tab-inner { display: flex; gap: 0; margin-bottom: 1rem; border-bottom: 1px solid #e8e6e0; }
-.tab-inner-btn { padding: 7px 18px; border: none; background: none; font-size: 13px; cursor: pointer; color: #888; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
-.tab-inner-btn.active { color: #534AB7; border-bottom-color: #534AB7; font-weight: 500; }
-.custom-panel { background: #fff; border: 1px solid #e8e6e0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
-.custom-panel h3 { font-size: 14px; font-weight: 600; color: #444; margin-bottom: 14px; }
-.custom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.cfield { display: flex; flex-direction: column; gap: 4px; }
-.cfield label { font-size: 12px; color: #666; }
-.cfield select, .cfield input { padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: #fff; color: #1a1a1a; }
-.cfield select:focus, .cfield input:focus { outline: none; border-color: #7F77DD; }
-.start-btn { padding: 9px 22px; background: #534AB7; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
-.start-btn:hover { opacity: 0.85; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f4f0;color:#1a1a1a;direction:rtl;font-size:15px}
+.wrap{max-width:960px;margin:0 auto;padding:1.25rem}
+h1{font-size:19px;font-weight:600;margin-bottom:1rem}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid #ddd;margin-bottom:1.25rem}
+.tab-btn{padding:9px 24px;border:none;background:none;font-size:14px;font-weight:500;cursor:pointer;color:#666;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{color:#534AB7;border-bottom-color:#534AB7}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* ═══════ EXPLORE TAB ═══════ */
+.explore-layout{display:grid;grid-template-columns:2fr 1fr;gap:1rem;align-items:start;direction:ltr}
+.svg-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1rem;direction:rtl}
+.controls-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1rem;direction:rtl}
+.ctrl-label{font-size:14px;color:#555;margin-bottom:6px;font-weight:500}
+.ctrl-row{margin-bottom:14px}
+.slider-with-input{display:flex;align-items:center;gap:8px}
+.slider-with-input input[type=range]{flex:1;accent-color:#534AB7}
+.num-input{width:58px;padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:14px;text-align:center;background:#fff;color:#1a1a1a}
+.num-input:focus{outline:none;border-color:#7F77DD}
+.trig-table{background:#f9f8f5;border-radius:8px;padding:10px;margin-top:14px}
+.trig-row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;border-bottom:1px solid #ece9e0}
+.trig-row:last-child{border-bottom:none}
+.trig-val{font-weight:600;font-family:'Courier New',monospace;color:#534AB7;font-size:13px}
+.trig-row-new{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #ece9e0;gap:8px;direction:ltr}
+.trig-formula{display:flex;align-items:center;gap:4px;flex-shrink:0;direction:ltr}
+.trig-fname{font-family:'Courier New',monospace;font-weight:700;font-size:14px;color:#333}
+.trig-eq{font-size:14px;color:#666}
+.trig-frac{display:inline-flex;flex-direction:column;align-items:center;font-size:12px;color:#555;border-right:1.5px solid #999;padding:0 5px;line-height:1.4;direction:rtl}
+.frac-n{border-bottom:1.5px solid #999;padding-bottom:1px;white-space:nowrap}
+.frac-d{padding-top:1px;white-space:nowrap}
+.trig-val-block{font-weight:700;font-family:'Courier New',monospace;color:#534AB7;font-size:13px;text-align:left;white-space:nowrap;direction:ltr}
+.legend-box{border:1px solid #e8e6e0;border-radius:8px;padding:8px 12px;margin-top:10px;font-size:14px;background:#fff}
+.legend-row{display:flex;align-items:center;gap:8px;padding:2px 0}
+.lsw{display:inline-block;width:22px;height:4px;border-radius:2px;flex-shrink:0}
+
+/* ═══════ EXERCISE TAB ═══════ */
+.ex-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:1rem;align-items:start;direction:ltr}
+.ex-left{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1rem;direction:rtl}
+.ex-right{display:flex;flex-direction:column;gap:10px;direction:rtl}
+
+/* Input panel */
+.input-section{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1rem}
+.input-title{font-size:13px;font-weight:600;color:#444;margin-bottom:12px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.ifield{display:flex;flex-direction:column;gap:4px}
+.ifield label{font-size:12px;color:#666}
+.ifield select,.ifield input{padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:13px;background:#fff;color:#1a1a1a}
+.ifield select:focus,.ifield input:focus{outline:none;border-color:#7F77DD}
+
+/* Orientation picker */
+.orient-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.orient-btn{border:1.5px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;padding:4px 6px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.orient-btn.active{border-color:#7F77DD;background:#EEEDFE}
+.orient-btn svg{display:block}
+
+/* Vertex name editor */
+.vname-row{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+.vname-row label{font-size:12px;color:#666;min-width:30px}
+.vname-input{width:40px;padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:14px;text-align:center;font-weight:600;background:#fff;color:#1a1a1a}
+.vname-input:focus{outline:none;border-color:#7F77DD}
+
+/* Interactive SVG click areas */
+.tri-svg-wrap{position:relative;display:block}
+.tri-svg-wrap svg{display:block;cursor:default}
+.side-hit{cursor:pointer;fill:transparent;stroke:transparent;stroke-width:18}
+.angle-hit{cursor:pointer;fill:transparent}
+.side-hit:hover{stroke:rgba(83,74,183,.35);stroke-width:18}.angle-hit:hover{fill:rgba(83,74,183,.15)}
+.highlight-pulse{animation:pulse .4s ease}
+@keyframes pulse{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
+
+/* Click tooltip */
+.click-tip{position:absolute;background:#534AB7;color:#fff;font-size:12px;padding:5px 10px;border-radius:7px;pointer-events:none;white-space:nowrap;z-index:10;transform:translateX(50%)}
+.click-tip::after{content:'';position:absolute;bottom:-5px;right:50%;transform:translateX(50%);border:5px solid transparent;border-bottom:none;border-top-color:#534AB7}
+
+/* Inline popover for data entry on click */
+.popover{display:none;position:absolute;background:#fff;border:1.5px solid #7F77DD;border-radius:10px;padding:10px 14px;z-index:20;box-shadow:0 4px 18px rgba(0,0,0,.12);min-width:160px}
+.popover.show{display:block}
+.popover-title{font-size:12px;font-weight:600;color:#534AB7;margin-bottom:8px}
+.popover-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.popover-row label{font-size:12px;color:#555;min-width:50px}
+.popover-input{flex:1;padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;width:80px;text-align:center}
+.popover-input:focus{outline:none;border-color:#7F77DD}
+.popover-ok{padding:5px 14px;background:#534AB7;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px}
+.popover-close{position:absolute;top:6px;left:8px;background:none;border:none;font-size:14px;cursor:pointer;color:#aaa;line-height:1}
+
+/* Steps panel */
+.step-box{border:1px solid #e8e6e0;border-radius:10px;overflow:hidden;margin-bottom:8px}
+.step-hdr{display:flex;align-items:center;gap:10px;padding:9px 13px;background:#f9f8f5}
+.step-num{width:24px;height:24px;border-radius:50%;background:#e8e6e0;color:#666;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-num.active{background:#534AB7;color:#fff}
+.step-num.done{background:#EAF3DE;color:#3B6D11}
+.step-title{font-size:13px;font-weight:500;flex:1}
+.step-body{padding:12px;display:none}
+.step-body.open{display:block}
+.q-label{font-size:13px;color:#555;margin-bottom:7px}
+.side-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.side-btn{padding:8px 20px;border:1.5px solid #ccc;border-radius:8px;background:none;font-size:15px;font-weight:700;cursor:pointer;color:#333;font-family:'Courier New',monospace;transition:all .15s}
+.side-btn:hover:not(:disabled){background:#f0eeff;border-color:#7F77DD}
+.side-btn.correct{background:#EAF3DE;border-color:#3B6D11;color:#27500A}
+.side-btn.wrong{background:#FCEBEB;border-color:#A32D2D;color:#791F1F}
+.fb{padding:7px 11px;border-radius:7px;font-size:13px;margin-top:5px;line-height:1.5}
+.fb.ok{background:#EAF3DE;color:#27500A}
+.fb.err{background:#FCEBEB;color:#791F1F}
+.fb.info{background:#E6F1FB;color:#0C447C}
+.func-btns{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.func-btn{padding:9px 14px;border:1px solid #ccc;border-radius:8px;background:none;font-size:13px;cursor:pointer;color:#333;transition:all .15s}
+.func-btn:hover:not(:disabled){background:#f0eeff}
+.func-btn.correct{background:#EAF3DE;border-color:#3B6D11;color:#27500A}
+.func-btn.wrong{background:#FCEBEB;border-color:#A32D2D;color:#791F1F}
+.eq-box{background:#f9f8f5;border-radius:8px;padding:14px;margin:8px 0;font-size:17px;font-family:'Courier New',monospace;text-align:center;direction:ltr}
+.eq-x{color:#534AB7;font-weight:700}
+.solve-step{padding:8px 13px;border-right:3px solid #e8e6e0;margin-bottom:5px;font-size:13px;font-family:'Courier New',monospace;direction:ltr;text-align:left;background:#fff;border-radius:0 7px 7px 0}
+.solve-step.shown{border-right-color:#534AB7;background:#faf9ff}
+.solve-step .slabel{font-family:'Segoe UI',Arial,sans-serif;font-size:11px;color:#888;direction:rtl;display:block;margin-bottom:2px}
+.solve-step.last-shown{border-right-color:#3B6D11;background:#f4fbee;font-weight:600;color:#27500A}
+.next-btn{padding:8px 18px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;margin-top:9px;transition:opacity .15s}
+.next-btn:disabled{opacity:.35;cursor:default}
+.next-btn:hover:not(:disabled){opacity:.85}
+.reveal-btn{padding:8px 18px;background:#fff;color:#534AB7;border:1px solid #534AB7;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;margin-top:9px}
+.reveal-btn:hover{background:#EEEDFE}
+.success-box{background:#EAF3DE;border:1px solid #639922;border-radius:10px;padding:14px;text-align:center;color:#27500A;font-size:14px;font-weight:600;margin-top:8px;line-height:1.7}
+.success-box span{font-size:12px;font-weight:400;display:block;margin-top:3px}
+.progress-dots{display:flex;gap:6px;margin-bottom:10px;align-items:center}
+.dot-step{width:8px;height:8px;border-radius:50%;background:#ddd;transition:background .2s}
+.dot-step.done{background:#3B6D11}.dot-step.active{background:#534AB7}
+.prob-bar{display:flex;gap:7px;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.prob-btn{padding:6px 13px;border:1px solid #ccc;border-radius:7px;background:none;font-size:13px;cursor:pointer;color:#444;transition:all .15s}
+.prob-btn.active{background:#EEEDFE;border-color:#7F77DD;color:#3C3489;font-weight:500}
+.start-btn{padding:8px 20px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;width:100%}
+.start-btn:hover{opacity:.85}
+.divider{height:1px;background:#e8e6e0;margin:12px 0}
 </style>
 </head>
 <body>
-<div class="sim-wrap">
+<div class="wrap">
 <h1>טריגונומטריה במשולש ישר זווית</h1>
+
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('general',this)">טאב כללי — חקירה</button>
-  <button class="tab-btn" onclick="switchTab('exercise',this)">תרגיל מודרך</button>
+  <button class="tab-btn active" onclick="switchTab('explore',this)">חקירה</button>
+  <button class="tab-btn" onclick="switchTab('exercise',this)">פתרון תרגילים</button>
 </div>
 
-<!-- TAB GENERAL -->
-<div id="tab-general" class="tab-content active">
-  <div class="card">
-    <div style="font-size:14px;font-weight:600;color:#444;margin-bottom:10px">שנה את הנתונים וצפה בשינויים</div>
-    <div class="triangle-area">
-      <div>
-        <svg id="gen-svg" width="280" height="260" viewBox="0 0 280 260" style="display:block"></svg>
-        <div class="legend-box" style="max-width:280px">
-          <div class="legend-row"><span class="lsw" style="background:#534AB7"></span><strong>a</strong> — ניצב מול (מול הזווית הנבחרת)</div>
-          <div class="legend-row"><span class="lsw" style="background:#0F6E56"></span><strong>b</strong> — ניצב ליד (סמוך לזווית)</div>
-          <div class="legend-row"><span class="lsw" style="background:#993C1D"></span><strong>c</strong> — יתר (מול 90° בקודקוד C)</div>
+<!-- ═══════════════ EXPLORE TAB ═══════════════ -->
+<div id="tab-explore" class="tab-content active">
+  <div class="explore-layout">
+    <!-- LEFT: big triangle -->
+    <div class="svg-card">
+      <svg id="gen-svg" width="100%" viewBox="0 0 420 360" style="display:block"></svg>
+      <div class="legend-box">
+        <div class="legend-row"><span class="lsw" style="background:#534AB7"></span><strong id="leg-a">a</strong> — ניצב מול (מול הזווית α)</div>
+        <div class="legend-row"><span class="lsw" style="background:#0F6E56"></span><strong id="leg-b">b</strong> — ניצב ליד (סמוך לזווית)</div>
+        <div class="legend-row"><span class="lsw" style="background:#993C1D"></span><strong id="leg-c">c</strong> — יתר</div>
+      </div>
+    </div>
+    <!-- RIGHT: controls -->
+    <div class="controls-card">
+      <div class="ctrl-row">
+        <div class="ctrl-label">זווית α (מעלות)</div>
+        <div class="slider-with-input">
+          <input type="range" min="10" max="80" value="35" id="sl-ang" step="1" oninput="syncSlider('ang')">
+          <input type="number" class="num-input" min="10" max="80" value="35" id="ni-ang" oninput="syncNum('ang')">
         </div>
       </div>
-      <div class="controls">
-        <div style="font-size:13px;color:#666;margin-bottom:8px">בחר זווית להדגשה:</div>
-        <div class="angle-selector">
-          <button class="angle-btn sel" id="btn-A" onclick="selAngle('A')">זווית α (קודקוד A)</button>
+      <div class="ctrl-row">
+        <div class="ctrl-label">יתר c</div>
+        <div class="slider-with-input">
+          <input type="range" min="40" max="140" value="100" id="sl-hyp" step="1" oninput="syncSlider('hyp')">
+          <input type="number" class="num-input" min="40" max="140" value="100" id="ni-hyp" oninput="syncNum('hyp')">
         </div>
-        <div class="slider-row">
-          <label>זווית α</label>
-          <input type="range" min="15" max="75" value="35" id="sl-ang" step="1" oninput="updateGen()">
-          <span class="slider-val" id="sv-ang">35°</span>
+      </div>
+      <div class="trig-table">
+        <div style="font-size:13px;font-weight:600;color:#666;margin-bottom:10px">ביחס לזווית α:</div>
+        <div class="trig-row-new">
+          <div class="trig-formula">
+            <span class="trig-fname">sin(α)</span>
+            <span class="trig-eq"> = </span>
+            <span class="trig-frac"><span class="frac-n">ניצב מול</span><span class="frac-d">יתר</span></span>
+          </div>
+          <div class="trig-val-block" id="g-sin">—</div>
         </div>
-        <div class="slider-row">
-          <label>יתר c</label>
-          <input type="range" min="60" max="140" value="100" id="sl-hyp" step="1" oninput="updateGen()">
-          <span class="slider-val" id="sv-hyp">100</span>
+        <div class="trig-row-new">
+          <div class="trig-formula">
+            <span class="trig-fname">cos(α)</span>
+            <span class="trig-eq"> = </span>
+            <span class="trig-frac"><span class="frac-n">ניצב ליד</span><span class="frac-d">יתר</span></span>
+          </div>
+          <div class="trig-val-block" id="g-cos">—</div>
         </div>
-        <div class="trig-table">
-          <div style="font-size:12px;font-weight:600;color:#888;margin-bottom:6px" id="gen-lbl">ביחס לזווית α (קודקוד A):</div>
-          <div class="trig-row"><span class="trig-label">sin = ניצב מול / יתר</span><span class="trig-val" id="g-sin">—</span></div>
-          <div class="trig-row"><span class="trig-label">cos = ניצב ליד / יתר</span><span class="trig-val" id="g-cos">—</span></div>
-          <div class="trig-row"><span class="trig-label">tan = ניצב מול / ניצב ליד</span><span class="trig-val" id="g-tan">—</span></div>
+        <div class="trig-row-new" style="border-bottom:none">
+          <div class="trig-formula">
+            <span class="trig-fname">tan(α)</span>
+            <span class="trig-eq"> = </span>
+            <span class="trig-frac"><span class="frac-n">ניצב מול</span><span class="frac-d">ניצב ליד</span></span>
+          </div>
+          <div class="trig-val-block" id="g-tan">—</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TAB EXERCISE -->
+<!-- ═══════════════ EXERCISE TAB ═══════════════ -->
 <div id="tab-exercise" class="tab-content">
-  <div class="tab-inner">
-    <button class="tab-inner-btn active" onclick="switchInner('preset',this)">תרגילים מוכנים</button>
-    <button class="tab-inner-btn" onclick="switchInner('custom',this)">הזן נתונים בעצמך</button>
-  </div>
+  <div class="ex-layout">
+    <!-- LEFT: interactive triangle -->
+    <div class="ex-left">
+      <div style="font-size:12px;color:#888;margin-bottom:8px;text-align:center">לחץ על צלע או זווית להגדרת נתון</div>
+      <div class="tri-svg-wrap" id="tri-wrap">
+        <svg id="ex-svg" width="100%" viewBox="0 0 300 280" style="display:block"></svg>
+        <div class="popover" id="popover">
+          <button class="popover-close" onclick="closePopover()">✕</button>
+          <div class="popover-title" id="pop-title">הגדר ערך</div>
+          <div class="popover-row">
+            <label id="pop-label">ערך:</label>
+            <input class="popover-input" type="number" id="pop-val" min="0.1" step="0.1">
+          </div>
+          <div style="font-size:11px;color:#888;margin-bottom:6px" id="pop-hint"></div>
+          <button class="popover-ok" onclick="applyPopover()">אישור ✓</button>
+        </div>
+      </div>
+      <div id="ex-leg" style="font-size:12px;color:#777;margin-top:8px;line-height:2;text-align:center"></div>
+    </div>
 
-  <div id="inner-preset">
-    <div class="prob-bar">
-      <span style="font-size:13px;color:#666">בחר תרגיל:</span>
-      <div id="prob-btns"></div>
-      <button class="prob-btn" onclick="randProb()" style="background:#f0eeff;border-color:#7F77DD;color:#3C3489">אקראי ↺</button>
-    </div>
-    <div class="ex-layout">
-      <div class="card" style="padding:0.75rem;flex:0 0 auto">
-        <svg id="ex-svg" width="235" height="220" viewBox="0 0 235 220" style="display:block"></svg>
-        <div id="ex-leg" style="font-size:11px;color:#777;margin-top:8px;line-height:1.9"></div>
-      </div>
-      <div class="ex-steps">
-        <div class="progress-dots" id="prog"><span style="font-size:11px;color:#888;margin-left:4px">התקדמות:</span></div>
-        <div id="steps-flow"></div>
-        <div id="success-area"></div>
-      </div>
-    </div>
-  </div>
+    <!-- RIGHT: data entry -->
+    <div class="ex-right">
+      <div class="input-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="input-title" style="margin-bottom:0">נתוני התרגיל</div>
+          <button onclick="randProb()" style="padding:5px 12px;border:1px solid #7F77DD;border-radius:7px;background:#f0eeff;color:#3C3489;font-size:12px;cursor:pointer;font-weight:500">אקראי ↺</button>
+        </div>
+        <div class="input-grid">
+          <div class="ifield">
+            <label>זווית ידועה (°)</label>
+            <input type="number" id="ex-deg" min="5" max="85" value="30" placeholder="לדוג׳ 35">
+          </div>
+          <div class="ifield">
+            <label>צלע נתונה</label>
+            <select id="ex-known">
+              <option value="hyp">יתר (c)</option>
+              <option value="opp">ניצב מול (a)</option>
+              <option value="adj">ניצב ליד (b)</option>
+            </select>
+          </div>
+          <div class="ifield">
+            <label>ערך הצלע הנתונה</label>
+            <input type="number" id="ex-knownv" min="0.1" value="10" placeholder="לדוג׳ 10">
+          </div>
+          <div class="ifield">
+            <label>מה למצוא?</label>
+            <select id="ex-find">
+              <option value="opp">ניצב מול (a)</option>
+              <option value="adj">ניצב ליד (b)</option>
+              <option value="hyp">יתר (c)</option>
+            </select>
+          </div>
+        </div>
+        <div id="ex-err" class="fb err" style="display:none;margin-bottom:8px"></div>
+        <div class="divider"></div>
 
-  <div id="inner-custom" style="display:none">
-    <div class="custom-panel">
-      <h3>הזן את נתוני התרגיל שלך</h3>
-      <div class="custom-grid">
-        <div class="cfield">
-          <label>הזווית הנתונה — בקודקוד איזה?</label>
-          <select id="c-angvert">
-            <option value="A">A (זווית α)</option>
-            <option value="B">B (זווית β)</option>
-          </select>
+        <!-- Orientation picker -->
+        <div style="font-size:12px;color:#666;margin-bottom:7px;font-weight:500">כיוון המשולש:</div>
+        <div class="orient-row" id="orient-row"></div>
+
+        <!-- Vertex name editor -->
+        <div style="font-size:12px;color:#666;margin-bottom:8px;font-weight:500;margin-top:4px">שמות קודקודים:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;direction:rtl">
+          <div class="ifield">
+            <label>זווית ישרה</label>
+            <input class="vname-input" style="width:100%" id="vn-c" value="C" maxlength="2" oninput="updateNames()">
+          </div>
+          <div class="ifield">
+            <label>קודקוד עליון</label>
+            <input class="vname-input" style="width:100%" id="vn-b" value="B" maxlength="2" oninput="updateNames()">
+          </div>
+          <div class="ifield">
+            <label>קודקוד זווית α</label>
+            <input class="vname-input" style="width:100%" id="vn-a" value="A" maxlength="2" oninput="updateNames()">
+          </div>
         </div>
-        <div class="cfield">
-          <label>גודל הזווית (מעלות)</label>
-          <input type="number" id="c-deg" min="5" max="85" value="30" placeholder="לדוג׳ 30">
-        </div>
-        <div class="cfield">
-          <label>הצלע הנתונה</label>
-          <select id="c-known">
-            <option value="hyp">יתר — c</option>
-            <option value="opp">ניצב מול — a</option>
-            <option value="adj">ניצב ליד — b</option>
-          </select>
-        </div>
-        <div class="cfield">
-          <label>ערך הצלע הנתונה</label>
-          <input type="number" id="c-knownv" min="1" value="10" placeholder="לדוג׳ 10">
-        </div>
-        <div class="cfield">
-          <label>הצלע שיש למצוא</label>
-          <select id="c-find">
-            <option value="opp">ניצב מול — a</option>
-            <option value="adj">ניצב ליד — b</option>
-            <option value="hyp">יתר — c</option>
-          </select>
-        </div>
+        <div style="font-size:11px;color:#888;margin:8px 0 6px;text-align:center">או לחץ ישירות על השרטוט להזנת נתון</div>
+        <button class="start-btn" onclick="startExercise()">עדכן שרטוט ↺</button>
       </div>
-      <div id="custom-err" class="fb err" style="display:none;margin-bottom:10px"></div>
-      <button class="start-btn" onclick="startCustom()">התחל פתרון מודרך ←</button>
-    </div>
-    <div id="custom-exercise" style="display:none">
-      <div class="ex-layout">
-        <div class="card" style="padding:0.75rem;flex:0 0 auto">
-          <svg id="cx-svg" width="235" height="220" viewBox="0 0 235 220" style="display:block"></svg>
-          <div id="cx-leg" style="font-size:11px;color:#777;margin-top:8px;line-height:1.9"></div>
-        </div>
-        <div class="ex-steps">
-          <div class="progress-dots" id="cprog"><span style="font-size:11px;color:#888;margin-left:4px">התקדמות:</span></div>
-          <div id="csteps-flow"></div>
-          <div id="csuccess-area"></div>
-        </div>
-      </div>
-      <button onclick="resetCustom()" style="margin-top:12px;padding:7px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;color:#555">← חזור לטופס הזנה</button>
     </div>
   </div>
 </div>
 </div>
 
+<!-- Popover overlay (close on outside click) -->
 <script>
-var gAngle='A';
-var PROB_BASE=[
-  {id:1,ang:'A',deg:30,known:'hyp',knownV:10,find:'opp'},
-  {id:2,ang:'B',deg:50,known:'adj',knownV:8, find:'hyp'},
-  {id:3,ang:'A',deg:40,known:'opp',knownV:6, find:'adj'},
-  {id:4,ang:'B',deg:25,known:'hyp',knownV:12,find:'adj'},
-];
-var problems=PROB_BASE.slice();
-var curProb=0;
-var sidesOk={};
-var solveIdx=0, solveList=[];
-var ctx={svg:'ex-svg',leg:'ex-leg',steps:'steps-flow',prog:'prog',success:'success-area'};
+// ─────────────────────────────────────────────
+// SHARED: vertex names & orientation
+// ─────────────────────────────────────────────
+var VN = {a:'A', c:'C', b:'B'}; // a=angle vertex, c=right-angle, b=top
+var ORIENT = 0; // 0..3
 
-function switchTab(t,btn){
-  document.querySelectorAll('.tab-content').forEach(function(e){e.classList.remove('active');});
-  document.querySelectorAll('.tab-btn').forEach(function(e){e.classList.remove('active');});
-  document.getElementById('tab-'+t).classList.add('active');
-  btn.classList.add('active');
+var ORIENTATIONS = [
+  // Each: [Apos, Cpos, Bpos] as fractions of viewBox
+  // 0: A=bottom-left, C=bottom-right, B=top-right (default)
+  {label:'↙↗', Ax:.08,Ay:.88, Cx:.92,Cy:.88, Bx:.92,By:.08},
+  // 1: A=bottom-right, C=bottom-left, B=top-left
+  {label:'↘↖', Ax:.92,Ay:.88, Cx:.08,Cy:.88, Bx:.08,By:.08},
+  // 2: A=top-left, C=top-right, B=bottom-right
+  {label:'↖↘', Ax:.08,Ay:.08, Cx:.92,Cy:.08, Bx:.92,By:.88},
+  // 3: A=top-right, C=top-left, B=bottom-left
+  {label:'↗↙', Ax:.92,Ay:.08, Cx:.08,Cy:.08, Bx:.08,By:.88},
+];
+
+function getVerts(W,H,orient){
+  var o=ORIENTATIONS[orient||0];
+  return {Ax:o.Ax*W, Ay:o.Ay*H, Cx:o.Cx*W, Cy:o.Cy*H, Bx:o.Bx*W, By:o.By*H};
 }
-function switchInner(t,btn){
-  document.getElementById('inner-preset').style.display=t==='preset'?'':'none';
-  document.getElementById('inner-custom').style.display=t==='custom'?'':'none';
-  document.querySelectorAll('.tab-inner-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
+
+function updateNames(){
+  VN.a=document.getElementById('vn-a').value||'A';
+  VN.c=document.getElementById('vn-c').value||'C';
+  VN.b=document.getElementById('vn-b').value||'B';
+  updateGen();
+  if(curExProb) drawExTriangle(curExProb);
 }
-function selAngle(a){
-  gAngle=a;
-  document.getElementById('btn-A').classList.toggle('sel',a==='A');
-  document.getElementById('gen-lbl').textContent='ביחס לזווית α (קודקוד A):';
+
+// ─────────────────────────────────────────────
+// SVG HELPERS
+// ─────────────────────────────────────────────
+function L(x1,y1,x2,y2,col,w){
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+
+    '" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round"/>';
+}
+function T(x,y,s,col,sz,anc,fw,ital){
+  return '<text x="'+x+'" y="'+y+'" fill="'+col+'" font-size="'+sz+
+    '" text-anchor="'+anc+'" font-weight="'+(fw||400)+
+    '" font-style="'+(ital?'italic':'normal')+
+    '" font-family="Segoe UI,Arial,sans-serif">'+s+'</text>';
+}
+function ValBox(mx,my,val,col,placement){
+  var txt=String(val),cw=8,pad=6;
+  var bw=Math.max(txt.length*cw+pad*2,30),bh=20;
+  var bx,by;
+  if(placement==='right'){bx=mx+5;by=my-bh/2;}
+  else if(placement==='left'){bx=mx-5-bw;by=my-bh/2;}
+  else if(placement==='above'){bx=mx-bw/2;by=my-bh-4;}
+  else{bx=mx-bw/2;by=my+4;}
+  return '<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+
+    '" rx="4" fill="white" stroke="'+col+'" stroke-width="1.5"/>'+
+    '<text x="'+(bx+bw/2)+'" y="'+(by+bh-5)+'" fill="'+col+
+    '" font-size="13" text-anchor="middle" font-weight="700" font-family="Segoe UI,Arial,sans-serif">'+txt+'</text>';
+}
+function RightAngleMark(Cx,Cy,Ax,Bx,Ay,By){
+  // Determine which corner type C is and draw square accordingly
+  // C is where the horizontal and vertical legs meet
+  var sz=12;
+  // direction toward A (horizontal) and toward B (vertical)
+  var dax=Math.sign(Ax-Cx)||0, day=Math.sign(Ay-Cy)||0;
+  var dbx=Math.sign(Bx-Cx)||0, dby=Math.sign(By-Cy)||0;
+  var p1x=Cx+dax*sz, p1y=Cy;
+  var p2x=Cx+dax*sz, p2y=Cy+dby*sz;
+  var p3x=Cx, p3y=Cy+dby*sz;
+  return '<polyline points="'+p1x+','+p1y+' '+p2x+','+p2y+' '+p3x+','+p3y+
+    '" fill="none" stroke="#999" stroke-width="1.3"/>';
+}
+
+function drawCore(svgId,W,H,orient,deg,
+                  colA,colB,colHyp,
+                  aVal,bVal,cVal,
+                  showAlpha,angSym,
+                  hitCallbacks){
+  var v=getVerts(W,H,orient);
+  var Ax=v.Ax,Ay=v.Ay,Cx=v.Cx,Cy=v.Cy,Bx=v.Bx,By=v.By;
+
+  var aMx=(Bx+Cx)/2, aMy=(By+Cy)/2;
+  var bMx=(Ax+Cx)/2, bMy=(Ay+Cy)/2;
+  var cMx=(Ax+Bx)/2, cMy=(Ay+By)/2;
+
+  // perp for c — points away from C
+  var hdx=Bx-Ax,hdy=By-Ay,hl=Math.sqrt(hdx*hdx+hdy*hdy);
+  var px=-hdy/hl, py=hdx/hl;
+  var midToCx=Cx-cMx, midToCy=Cy-cMy;
+  if(px*midToCx+py*midToCy>0){px=-px;py=-py;}
+  var cLetterOff=18, cBoxOff=38;
+  var cLx=cMx+px*cLetterOff, cLy=cMy+py*cLetterOff;
+  var cBx=cMx+px*cBoxOff, cBy=cMy+py*cBoxOff;
+
+  var el=[];
+
+  // ── Hit areas ──
+  if(hitCallbacks){
+    // Wider invisible hit strokes for sides
+    el.push('<line x1="'+Bx+'" y1="'+By+'" x2="'+Cx+'" y2="'+Cy+'" class="side-hit" id="hit-a" onclick="'+hitCallbacks.a+'"/>');
+    el.push('<line x1="'+Ax+'" y1="'+Ay+'" x2="'+Cx+'" y2="'+Cy+'" class="side-hit" id="hit-b" onclick="'+hitCallbacks.b+'"/>');
+    el.push('<line x1="'+Ax+'" y1="'+Ay+'" x2="'+Bx+'" y2="'+By+'" class="side-hit" id="hit-c" onclick="'+hitCallbacks.c+'"/>');
+    // Larger clickable area for angle vertex
+    el.push('<circle cx="'+Ax+'" cy="'+Ay+'" r="28" class="angle-hit" onclick="'+hitCallbacks.ang+'"/>');
+  }
+
+  // ── Sides (thicker) ──
+  el.push(L(Bx,By,Cx,Cy,colA,5));
+  el.push(L(Ax,Ay,Cx,Cy,colB,5));
+  el.push(L(Ax,Ay,Bx,By,colHyp,5));
+  el.push(RightAngleMark(Cx,Cy,Ax,Bx,Ay,By));
+
+  // ── Angle arc at A ──
+  // Arc sweeps from leg AC direction to hyp AB direction, INSIDE the angle
+  if(showAlpha&&deg>0){
+    var rad=deg*Math.PI/180,rA=30;
+    var acx=Cx-Ax, acy=Cy-Ay, acl=Math.sqrt(acx*acx+acy*acy);
+    var ux=acx/acl, uy=acy/acl;
+    var abx=Bx-Ax, aby=By-Ay, abl=Math.sqrt(abx*abx+aby*aby);
+    var vx=abx/abl, vy=aby/abl;
+    // Start on AC side, end on AB side
+    var sx=Ax+rA*ux, sy=Ay+rA*uy;
+    var ex2=Ax+rA*vx, ey2=Ay+rA*vy;
+    // sweep=1 draws the arc going "around" from start to end counter-clockwise in SVG
+    // We want the shorter arc INSIDE the triangle.
+    // cross product u×v: positive = u is CW from v, so arc from u to v is CCW (sweep=0 in SVG = CCW)
+    // but SVG y-axis is flipped, so CCW visually = sweep=1
+    var cross=ux*vy-uy*vx; // positive means u is to the "right" of v in screen coords
+    var sweep=cross>=0?1:0;
+    el.push('<path d="M'+sx+' '+sy+' A'+rA+' '+rA+' 0 0 '+sweep+' '+ex2+' '+ey2+
+      '" fill="#EEEDFE" stroke="#7F77DD" stroke-width="2"/>');
+    var rL=44;
+    var bux=(ux+vx)/2, buy=(uy+vy)/2, bl2=Math.sqrt(bux*bux+buy*buy);
+    if(bl2>0){bux/=bl2;buy/=bl2;}
+    var alphaLabel=(angSym||'α')+(deg?' = '+deg+'°':'');
+    el.push(T(Ax+rL*bux, Ay+rL*buy+5, alphaLabel, '#534AB7',15,'middle',700,true));
+  }
+
+  // ── Vertex dots + labels ──
+  var vpad=22;
+  var gcx=(Ax+Bx+Cx)/3,gcy=(Ay+By+Cy)/3;
+  function vpos(vx,vy){var dx=vx-gcx,dy=vy-gcy,dl=Math.sqrt(dx*dx+dy*dy);return{x:vx+(dx/dl)*vpad,y:vy+(dy/dl)*vpad};}
+  var pa=vpos(Ax,Ay), pb=vpos(Bx,By), pc=vpos(Cx,Cy);
+  // Filled circles at vertices
+  el.push('<circle cx="'+Ax+'" cy="'+Ay+'" r="6" fill="'+colA+'" opacity="0.8"/>');
+  el.push('<circle cx="'+Bx+'" cy="'+By+'" r="6" fill="'+colHyp+'" opacity="0.8"/>');
+  el.push('<circle cx="'+Cx+'" cy="'+Cy+'" r="6" fill="#888" opacity="0.8"/>');
+  // Clickable vertex label areas (if hitCallbacks provided)
+  if(hitCallbacks&&hitCallbacks.va){
+    el.push('<circle cx="'+pa.x+'" cy="'+pa.y+'" r="14" fill="transparent" style="cursor:pointer" onclick="'+hitCallbacks.va+'"/>');
+    el.push('<circle cx="'+pb.x+'" cy="'+pb.y+'" r="14" fill="transparent" style="cursor:pointer" onclick="'+hitCallbacks.vb+'"/>');
+    el.push('<circle cx="'+pc.x+'" cy="'+pc.y+'" r="14" fill="transparent" style="cursor:pointer" onclick="'+hitCallbacks.vc+'"/>');
+  }
+  // Labels with underline to hint clickability
+  var vStyle=hitCallbacks&&hitCallbacks.va?'cursor:pointer;text-decoration:underline dotted':'';
+  el.push('<text x="'+pa.x+'" y="'+(pa.y+5)+'" fill="#222" font-size="17" text-anchor="middle" font-weight="700" font-family="Segoe UI,Arial,sans-serif" style="'+vStyle+'">'+VN.a+'</text>');
+  el.push('<text x="'+pb.x+'" y="'+(pb.y+5)+'" fill="#222" font-size="17" text-anchor="middle" font-weight="700" font-family="Segoe UI,Arial,sans-serif" style="'+vStyle+'">'+VN.b+'</text>');
+  el.push('<text x="'+pc.x+'" y="'+(pc.y+5)+'" fill="#222" font-size="17" text-anchor="middle" font-weight="700" font-family="Segoe UI,Arial,sans-serif" style="'+vStyle+'">'+VN.c+'</text>');
+
+  // ── Side letters + value boxes ──
+  var sOff=16;
+  // Side a (BC)
+  var adx=Cx-Bx,ady=Cy-By,al=Math.sqrt(adx*adx+ady*ady);
+  var apx=-ady/al,apy=adx/al;
+  if(apx*(Ax-aMx)+apy*(Ay-aMy)>0){apx=-apx;apy=-apy;}
+  el.push(T(aMx+apx*sOff,aMy+apy*sOff,'a',colA,17,'middle',700,true));
+  if(aVal) el.push(ValBox(aMx+apx*(sOff+34),aMy+apy*(sOff+34),aVal,colA,'above'));
+
+  // Side b (AC)
+  var bdx=Cx-Ax,bdy=Cy-Ay,blen=Math.sqrt(bdx*bdx+bdy*bdy);
+  var bpx=-bdy/blen,bpy=bdx/blen;
+  if(bpx*(Bx-bMx)+bpy*(By-bMy)>0){bpx=-bpx;bpy=-bpy;}
+  el.push(T(bMx+bpx*sOff,bMy+bpy*sOff,'b',colB,17,'middle',700,true));
+  if(bVal) el.push(ValBox(bMx+bpx*(sOff+34),bMy+bpy*(sOff+34),bVal,colB,'above'));
+
+  // Side c (hyp)
+  el.push(T(cLx,cLy,'c',colHyp,17,'middle',700,true));
+  if(cVal) el.push(ValBox(cBx,cBy,cVal,colHyp,'above'));
+
+  document.getElementById(svgId).innerHTML=el.join('');
+}
+
+// ─────────────────────────────────────────────
+// EXPLORE TAB
+// ─────────────────────────────────────────────
+function syncSlider(id){
+  var v=document.getElementById('sl-'+id).value;
+  document.getElementById('ni-'+id).value=v;
+  updateGen();
+}
+function syncNum(id){
+  var el=document.getElementById('ni-'+id);
+  var v=Math.min(Math.max(+el.value,+el.min||10),+el.max||140);
+  el.value=v;
+  document.getElementById('sl-'+id).value=v;
   updateGen();
 }
 function updateGen(){
   var deg=+document.getElementById('sl-ang').value;
   var hyp=+document.getElementById('sl-hyp').value;
-  document.getElementById('sv-ang').textContent=deg+'°';
-  document.getElementById('sv-hyp').textContent=hyp;
   var r=deg*Math.PI/180;
   var oppA=hyp*Math.sin(r),adjA=hyp*Math.cos(r);
-  var opp=gAngle==='A'?oppA:adjA, adj=gAngle==='A'?adjA:oppA;
-  document.getElementById('g-sin').textContent=(opp/hyp).toFixed(3)+'  = '+opp.toFixed(1)+'/'+hyp;
-  document.getElementById('g-cos').textContent=(adj/hyp).toFixed(3)+'  = '+adj.toFixed(1)+'/'+hyp;
-  document.getElementById('g-tan').textContent=(opp/adj).toFixed(3)+'  = '+opp.toFixed(1)+'/'+adj.toFixed(1);
-  drawGenTri(deg,hyp,oppA,adjA);
-}
+  document.getElementById('g-sin').innerHTML='= <b>'+(oppA/hyp).toFixed(3)+'</b> &nbsp;<span style="font-family:inherit;font-size:12px;color:#888">('+oppA.toFixed(1)+'/'+hyp+')</span>';
+  document.getElementById('g-cos').innerHTML='= <b>'+(adjA/hyp).toFixed(3)+'</b> &nbsp;<span style="font-family:inherit;font-size:12px;color:#888">('+adjA.toFixed(1)+'/'+hyp+')</span>';
+  document.getElementById('g-tan').innerHTML='= <b>'+(oppA/adjA).toFixed(3)+'</b> &nbsp;<span style="font-family:inherit;font-size:12px;color:#888">('+oppA.toFixed(1)+'/'+adjA.toFixed(1)+')</span>';
+  // Draw — use fixed maxHyp=140 so hyp slider changes triangle size
+  var maxH=140,W=420,H=360;
+  var sc=Math.min((W*0.78)/maxH,(H*0.78)/maxH);
+  var ax=adjA*sc,ay=oppA*sc;
+  // Center in viewBox
+  var padH=(W-(ax))/2, padV=(H-ay)/2;
+  // Override orientation 0 positions with actual computed coords
+  var Ax=padH, Ay=padV+ay, Cx=padH+ax, Cy=padV+ay, Bx=padH+ax, By=padV;
+  // Draw directly (explore always uses fixed layout)
+  var OPP='#534AB7',ADJ='#0F6E56',HYP='#993C1D';
+  var W2=420,H2=360;
 
-// SVG helpers
-function L(x1,y1,x2,y2,col,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round"/>';}
-function R(x,y,w,h,fill,sc,sw){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+fill+'" stroke="'+sc+'" stroke-width="'+sw+'"/>';}
-function T(x,y,s,col,sz,anc,fw,ital){return '<text x="'+x+'" y="'+y+'" fill="'+col+'" font-size="'+sz+'" text-anchor="'+anc+'" font-weight="'+(fw||400)+'" font-style="'+(ital?'italic':'normal')+'" font-family="Segoe UI,Arial,sans-serif">'+s+'</text>';}
-function Arc(vx,vy,deg,flip){
-  var r=22,rad=deg*Math.PI/180,x2,y2;
-  if(!flip){x2=vx+r*Math.cos(-rad);y2=vy+r*Math.sin(-rad);}
-  else{x2=vx-r*Math.cos(-rad);y2=vy+r*Math.sin(-rad);}
-  return '<path d="M'+(flip?vx-r:vx+r)+' '+vy+' A'+r+' '+r+' 0 0 '+(flip?0:1)+' '+x2+' '+y2+'" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>';
-}
-// Triangle layout (both tabs):
-//   A = bottom-LEFT  (angle α)
-//   C = bottom-RIGHT (right angle 90°)
-//   B = top-RIGHT    (angle β)
-//
-// Sides (standard notation — letter opposite its vertex):
-//   a = BC  = right vertical leg    (opposite A)
-//   b = AC  = horizontal bottom leg (opposite B)
-//   c = AB  = diagonal hypotenuse   (opposite C = right angle)
-//
-// For angle A: opp=a (vertical BC), adj=b (horizontal AC)
-// For angle B: opp=b (horizontal AC), adj=a (vertical BC)
+  // perp for c
+  var hdx=Bx-Ax,hdy=By-Ay,hl=Math.sqrt(hdx*hdx+hdy*hdy);
+  var ppx=-hdy/hl, ppy=hdx/hl;
+  var midToCx=Cx-(Ax+Bx)/2, midToCy=Cy-(Ay+By)/2;
+  if(ppx*midToCx+ppy*midToCy>0){ppx=-ppx;ppy=-ppy;}
+  var cLx=(Ax+Bx)/2+ppx*16, cLy=(Ay+By)/2+ppy*16;
+  var cBx=(Ax+Bx)/2+ppx*34, cBy=(Ay+By)/2+ppy*34;
 
-function RightAngleMark(cx,cy,sz){
-  sz=sz||11;
-  // C is bottom-right → square goes LEFT and UP
-  return '<polyline points="'+(cx-sz)+','+cy+' '+(cx-sz)+','+(cy-sz)+' '+cx+','+(cy-sz)+
-         '" fill="none" stroke="#888" stroke-width="1.3"/>';
-}
-
-function ValBox(mx,my,val,col,placement){
-  var txt=String(val), charW=6.8, pad=5;
-  var bw=Math.max(txt.length*charW+pad*2, 24), bh=17;
-  var bx,by;
-  if(placement==='right'){bx=mx+6;by=my-bh/2;}
-  else if(placement==='left'){bx=mx-6-bw;by=my-bh/2;}
-  else if(placement==='above'){bx=mx-bw/2;by=my-bh-5;}
-  else{bx=mx-bw/2;by=my+5;}
-  return '<rect x="'+bx+'" y="'+by+'" width="'+bw+'" height="'+bh+
-         '" rx="3" fill="white" stroke="'+col+'" stroke-width="1.2"/>'+
-         '<text x="'+(bx+bw/2)+'" y="'+(by+bh-4)+'" fill="'+col+
-         '" font-size="11" text-anchor="middle" font-weight="700" font-family="Segoe UI,Arial,sans-serif">'+txt+'</text>';
-}
-
-// Arc at vertex Vx,Vy sweeping angDeg. atA: vertex is A (bottom-left, angle opens up-right).
-// atB: vertex is B (top-right, angle opens down-left).
-function ArcAt(vx,vy,angDeg,atA){
-  var r=20, rad=angDeg*Math.PI/180;
-  var x1,y1,x2,y2;
-  if(atA){
-    // start rightward, sweep counter-clockwise (upward)
-    x1=vx+r; y1=vy;
-    x2=vx+r*Math.cos(rad); y2=vy-r*Math.sin(rad);
-    return '<path d="M'+x1+' '+y1+' A'+r+' '+r+' 0 0 0 '+x2+' '+y2+
-           '" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>';
-  } else {
-    // start leftward, sweep clockwise (downward)
-    x1=vx-r; y1=vy;
-    x2=vx-r*Math.cos(rad); y2=vy+r*Math.sin(rad);
-    return '<path d="M'+x1+' '+y1+' A'+r+' '+r+' 0 0 1 '+x2+' '+y2+
-           '" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>';
-  }
-}
-
-function drawTriSVG(svgId, Ax,Ay, Bx,By, Cx,Cy,
-                    colA,colB,colC,
-                    aVal,bVal,cVal,
-                    showA, degA, showB, degB, angSym, atA){
-  // Layout: A=bottom-left, C=bottom-right (right angle), B=top-right
-  // a=BC vertical, b=AC horizontal, c=AB diagonal hypotenuse
-  var aMx=(Bx+Cx)/2, aMy=(By+Cy)/2; // midpoint of BC (vertical)
-  var bMx=(Ax+Cx)/2, bMy=Ay;        // midpoint of AC (horizontal)
-  var cMx=(Ax+Bx)/2, cMy=(Ay+By)/2; // midpoint of AB (diagonal)
-
-  // Perpendicular offset for c label (push away from the line)
-  var hypDx=Bx-Ax, hypDy=By-Ay, hypLen=Math.sqrt(hypDx*hypDx+hypDy*hypDy);
-  // perp direction pointing "upper-left" from the diagonal line
-  var pX=-hypDy/hypLen, pY=hypDx/hypLen;
-  var cOff=20;
-  var cLx=cMx+pX*cOff, cLy=cMy+pY*cOff;
+  var aMx=(Bx+Cx)/2,aMy=(By+Cy)/2;
+  var bMx=(Ax+Cx)/2,bMy=(Ay+Cy)/2;
 
   var el=[];
-  el.push(L(Bx,By,Cx,Cy,colA,4));   // a: B-C vertical
-  el.push(L(Ax,Ay,Cx,Cy,colB,4));   // b: A-C horizontal
-  el.push(L(Ax,Ay,Bx,By,colC,4));   // c: A-B hypotenuse
-  el.push(RightAngleMark(Cx,Cy));
+  el.push(L(Bx,By,Cx,Cy,OPP,5));
+  el.push(L(Ax,Ay,Cx,Cy,ADJ,5));
+  el.push(L(Ax,Ay,Bx,By,HYP,5));
+  el.push(RightAngleMark(Cx,Cy,Ax,Bx,Ay,By));
+  el.push('<circle cx="'+Ax+'" cy="'+Ay+'" r="5" fill="'+OPP+'" opacity="0.7"/>');
+  el.push('<circle cx="'+Bx+'" cy="'+By+'" r="5" fill="'+HYP+'" opacity="0.7"/>');
+  el.push('<circle cx="'+Cx+'" cy="'+Cy+'" r="5" fill="#999" opacity="0.7"/>');
 
-  // Angle A (bottom-left): opens between rightward (+x) and the hypotenuse going up-right
-  // Arc sweeps from (Ax+r,Ay) counter-clockwise to (Ax+r*cos(degA), Ay-r*sin(degA))
-  if(showA){
-    var rA=22, radA=degA*Math.PI/180;
-    var ax1=Ax+rA, ay1=Ay, ax2=Ax+rA*Math.cos(radA), ay2=Ay-rA*Math.sin(radA);
-    el.push('<path d="M'+ax1+' '+ay1+' A'+rA+' '+rA+' 0 0 0 '+ax2+' '+ay2+'" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>');
-    var rL=30, midA=radA/2;
-    el.push(T(Ax+rL*Math.cos(midA), Ay-rL*Math.sin(midA)+4,
-              atA?angSym:'\u03b2', '#534AB7', 13, 'middle', 700, true));
-  }
+  // Arc at A
+  var rad=deg*Math.PI/180,rA=30;
+  var acx=Cx-Ax,acy=Cy-Ay,acl=Math.sqrt(acx*acx+acy*acy);
+  var ux=acx/acl,uy=acy/acl;
+  var abx=Bx-Ax,aby=By-Ay,abl=Math.sqrt(abx*abx+aby*aby);
+  var vvx=abx/abl,vvy=aby/abl;
+  var sx=Ax+rA*ux,sy=Ay+rA*uy,ex=Ax+rA*vvx,ey=Ay+rA*vvy;
+  var cr=ux*vvy-uy*vvx,sw=cr>=0?1:0;
+  el.push('<path d="M'+sx+' '+sy+' A'+rA+' '+rA+' 0 0 '+sw+' '+ex+' '+ey+'" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.8"/>');
+  var rL=44,bux=(ux+vvx)/2,buy=(uy+vvy)/2,bl2=Math.sqrt(bux*bux+buy*buy);
+  if(bl2>0){bux/=bl2;buy/=bl2;}
+  el.push(T(Ax+rL*bux,Ay+rL*buy+5,'α = '+deg+'°','#534AB7',16,'middle',700,true));
 
-  // Angle B: no arc drawn
+  // Vertex labels (pushed outward from centroid)
+  var gcx=(Ax+Bx+Cx)/3,gcy=(Ay+By+Cy)/3,vp=20;
+  function vl(vx,vy,name){var dx=vx-gcx,dy=vy-gcy,dl=Math.sqrt(dx*dx+dy*dy);return T(vx+(dx/dl)*vp,vy+(dy/dl)*vp+5,name,'#222',18,'middle',700,false);}
+  el.push(vl(Ax,Ay,VN.a));el.push(vl(Bx,By,VN.b));el.push(vl(Cx,Cy,VN.c));
 
-  // Vertex labels
-  el.push(T(Ax-16, Ay+5,  'A', '#333', 14, 'middle', 700, false));
-  el.push(T(Bx+14, By,    'B', '#333', 14, 'middle', 700, false));
-  el.push(T(Cx+14, Cy+5,  'C', '#333', 14, 'middle', 700, false));
+  // Side letters + values
+  var aadx=Cx-Bx,aady=Cy-By,aal=Math.sqrt(aadx*aadx+aady*aady);
+  var apx=-aady/aal,apy=aadx/aal;if(apx*(Ax-aMx)+apy*(Ay-aMy)>0){apx=-apx;apy=-apy;}
+  el.push(T(aMx+apx*18,aMy+apy*18,'a',OPP,18,'middle',700,true));
+  el.push(ValBox(aMx+apx*42,aMy+apy*42,oppA.toFixed(1),OPP,'above'));
 
-  // Side a (BC, vertical right): label + box to the right
-  el.push(T(aMx+14, aMy+4, 'a', colA, 14, 'start', 700, true));
-  if(aVal) el.push(ValBox(aMx+14, aMy+4, aVal, colA, 'right'));
+  var bbdx=Cx-Ax,bbdy=Cy-Ay,bbl=Math.sqrt(bbdx*bbdx+bbdy*bbdy);
+  var bpx=-bbdy/bbl,bpy=bbdx/bbl;if(bpx*(Bx-bMx)+bpy*(By-bMy)>0){bpx=-bpx;bpy=-bpy;}
+  el.push(T(bMx+bpx*18,bMy+bpy*18,'b',ADJ,18,'middle',700,true));
+  el.push(ValBox(bMx+bpx*42,bMy+bpy*42,adjA.toFixed(1),ADJ,'above'));
 
-  // Side b (AC, horizontal bottom): label + box below
-  el.push(T(bMx, bMy+16, 'b', colB, 14, 'middle', 700, true));
-  if(bVal) el.push(ValBox(bMx, bMy+16, bVal, colB, 'below'));
+  el.push(T(cLx,cLy,'c',HYP,15,'middle',700,true));
+  el.push(ValBox(cBx,cBy,hyp,HYP,'above'));
 
-  // Side c: order from line outward = letter c (just above line), then valbox further out
-  // pX,pY points away from the triangle (upper-left direction from diagonal)
-  var cLetterOff=14;
-  var cValOff=36;
-  var cLetterX=cMx+pX*cLetterOff, cLetterY=cMy+pY*cLetterOff;
-  var cBoxX=cMx+pX*cValOff, cBoxY=cMy+pY*cValOff;
-  el.push(T(cLetterX, cLetterY, 'c', colC, 15, 'middle', 700, true));
-  if(cVal) el.push(ValBox(cBoxX, cBoxY, cVal, colC, 'above'));
-
-  document.getElementById(svgId).innerHTML=el.join('');
+  document.getElementById('gen-svg').innerHTML=el.join('');
 }
 
-function drawGenTri(deg,hyp,oppA,adjA){
-  var W=280,H=260,padL=50,padR=50,padT=40,padB=56;
-  var availW=W-padL-padR, availH=H-padT-padB;
-  var r=deg*Math.PI/180;
-  // Scale based on hyp directly — so bigger hyp = bigger triangle
-  var maxHyp=140; // slider max
-  var sc=Math.min(availW, availH) / maxHyp;
-  var ax=adjA*sc, ay=oppA*sc;
-  // A bottom-left, C bottom-right, B top-right
-  var Ax=padL,    Ay=padT+ay;
-  var Cx=padL+ax, Cy=padT+ay;
-  var Bx=padL+ax, By=padT;
-
-  var OPP='#534AB7',ADJ='#0F6E56',HYP='#993C1D';
-  var colA=gAngle==='A'?OPP:ADJ;
-  var colB=gAngle==='A'?ADJ:OPP;
-  var atA=gAngle==='A';
-
-  drawTriSVG('gen-svg', Ax,Ay, Bx,By, Cx,Cy,
-    colA,colB,HYP,
-    oppA.toFixed(1), adjA.toFixed(1), String(hyp),
-    true,deg, true,90-deg, atA?'α':'β', atA);
+// ─────────────────────────────────────────────
+// ORIENTATION PICKER
+// ─────────────────────────────────────────────
+function buildOrientBtns(){
+  var row=document.getElementById('orient-row');
+  var svgTemplates=[
+    '<svg width="44" height="36" viewBox="0 0 44 36"><polygon points="4,32 40,32 40,4" fill="none" stroke="#534AB7" stroke-width="1.8"/><rect x="33" y="25" width="7" height="7" fill="none" stroke="#999" stroke-width="1"/></svg>',
+    '<svg width="44" height="36" viewBox="0 0 44 36"><polygon points="40,32 4,32 4,4" fill="none" stroke="#534AB7" stroke-width="1.8"/><rect x="4" y="25" width="7" height="7" fill="none" stroke="#999" stroke-width="1"/></svg>',
+    '<svg width="44" height="36" viewBox="0 0 44 36"><polygon points="4,4 40,4 40,32" fill="none" stroke="#534AB7" stroke-width="1.8"/><rect x="33" y="4" width="7" height="7" fill="none" stroke="#999" stroke-width="1"/></svg>',
+    '<svg width="44" height="36" viewBox="0 0 44 36"><polygon points="40,4 4,4 4,32" fill="none" stroke="#534AB7" stroke-width="1.8"/><rect x="4" y="4" width="7" height="7" fill="none" stroke="#999" stroke-width="1"/></svg>',
+  ];
+  row.innerHTML=svgTemplates.map(function(s,i){
+    return '<button class="orient-btn'+(i===0?' active':'')+'" onclick="setOrient('+i+')" title="כיוון '+(i+1)+'">'+s+'</button>';
+  }).join('');
+}
+function setOrient(n){
+  ORIENT=n;
+  document.querySelectorAll('.orient-btn').forEach(function(b,i){b.classList.toggle('active',i===n);});
+  if(curExProb) drawExTriangle(curExProb);
 }
 
-function drawExTri(p,svgId,legId){
-  var W=235,H=220,padL=48,padR=48,padT=38,padB=54;
-  var availW=W-padL-padR, availH=H-padT-padB;
-  var r=p.deg*Math.PI/180;
-  // Natural aspect ratio of the legs
-  var adjRatio=Math.cos(r), oppRatio=Math.sin(r);
-  var sc=Math.min(availW/adjRatio, availH/oppRatio);
-  var ax=adjRatio*sc, ay=oppRatio*sc;
+// ─────────────────────────────────────────────
+// EXERCISE TAB — interactive triangle
+// ─────────────────────────────────────────────
+var curExProb=null;
+var exData={deg:null,known:null,knownV:null,find:null};
+var popoverTarget=null; // 'a','b','c','ang'
 
-  var Ax=padL,    Ay=padT+ay;
-  var Cx=padL+ax, Cy=padT+ay;
-  var Bx=padL+ax, By=padT;
-
+function drawExTriangle(p){
   var OPP='#534AB7',ADJ='#0F6E56',HYP='#993C1D';
-  var atA=p.ang==='A';
-  var colA=atA?OPP:ADJ;
-  var colB=atA?ADJ:OPP;
-
-  var aRole=atA?'opp':'adj'; // role of side a for this problem's angle
-  var bRole=atA?'adj':'opp';
+  var aRole='opp',bRole='adj'; // a=opp, b=adj for angle at A (always)
   var aLbl=p.known===aRole?String(p.knownV):(p.find===aRole?'?':'');
   var bLbl=p.known===bRole?String(p.knownV):(p.find===bRole?'?':'');
   var cLbl=p.known==='hyp'?String(p.knownV):(p.find==='hyp'?'?':'');
 
-  drawTriSVG(svgId, Ax,Ay, Bx,By, Cx,Cy,
-    colA,colB,HYP,
-    aLbl,bLbl,cLbl,
-    true,p.deg, false,0, atA?'α':'β', atA);
+  drawCore('ex-svg',300,280,ORIENT,p.deg,OPP,ADJ,HYP,aLbl,bLbl,cLbl,true,'α',{
+    a:"hitSide('a',event)",b:"hitSide('b',event)",c:"hitSide('c',event)",ang:"hitAngle(event)",
+    va:"hitVertex('a',event)",vb:"hitVertex('b',event)",vc:"hitVertex('c',event)"
+  });
 
-  var la=atA?'ניצב מול':'ניצב ליד';
-  var lb=atA?'ניצב ליד':'ניצב מול';
-  document.getElementById(legId).innerHTML=
-    '<span style="color:'+colA+'">■ a</span> — '+la+'&nbsp;&nbsp;'+
-    '<span style="color:'+colB+'">■ b</span> — '+lb+'&nbsp;&nbsp;'+
-    '<span style="color:#993C1D">■ c</span> — יתר';
+  document.getElementById('ex-leg').innerHTML=
+    '<span style="color:'+OPP+'">■ a</span> ניצב מול &nbsp;'+
+    '<span style="color:'+ADJ+'">■ b</span> ניצב ליד &nbsp;'+
+    '<span style="color:'+HYP+'">■ c</span> יתר';
 }
 
+function drawExTriangleBlank(){
+  var initDeg=+document.getElementById('ex-deg').value||30;
+  drawCore('ex-svg',300,280,ORIENT,initDeg,'#534AB7','#0F6E56','#993C1D','','','',true,'α',{
+    a:"hitSide('a',event)",b:"hitSide('b',event)",c:"hitSide('c',event)",ang:"hitAngle(event)",
+    va:"hitVertex('a',event)",vb:"hitVertex('b',event)",vc:"hitVertex('c',event)"
+  });
+  document.getElementById('ex-leg').innerHTML=
+    '<span style="color:#888">לחץ על צלע או זווית להזנת ערך</span>';
+}
 
-// Helpers
+// Popover
+var popFields={};
+function hitSide(side,evt){
+  evt.stopPropagation();
+  var labels={a:'ניצב מול (a)',b:'ניצב ליד (b)',c:'יתר (c)'};
+  openPopover(labels[side], 'ערך הצלע:', side, evt);
+}
+function hitAngle(evt){
+  evt.stopPropagation();
+  openPopover('זווית α', 'גודל בְּמעלות:', 'ang', evt);
+}
+function hitVertex(which,evt){
+  evt.stopPropagation();
+  var titles={a:'קודקוד זווית α',b:'קודקוד עליון',c:'זווית ישרה'};
+  var fields={a:'vn-a',b:'vn-b',c:'vn-c'};
+  // Inline rename: focus the relevant input in the form
+  var inp=document.getElementById(fields[which]);
+  if(inp){inp.focus();inp.select();}
+}
+function openPopover(title,label,target,evt){
+  popoverTarget=target;
+  document.getElementById('pop-title').textContent='הגדר: '+title;
+  document.getElementById('pop-label').textContent=label;
+  var inp=document.getElementById('pop-val');
+  inp.value='';
+  if(target==='ang'){inp.min=5;inp.max=85;inp.step=1;inp.placeholder='5–85';}
+  else{inp.min=0.1;inp.max=9999;inp.step=0.1;inp.placeholder='ערך חיובי';}
+  var pop=document.getElementById('popover');
+  pop.classList.add('show');
+  // Position near click, inside wrap
+  var wrap=document.getElementById('tri-wrap');
+  var wr=wrap.getBoundingClientRect();
+  var x=evt.clientX-wr.left, y=evt.clientY-wr.top;
+  pop.style.top=(y+12)+'px';
+  pop.style.right=Math.max(0,wr.width-x-80)+'px';
+  setTimeout(function(){inp.focus();},50);
+}
+function closePopover(){document.getElementById('popover').classList.remove('show');popoverTarget=null;}
+function applyPopover(){
+  var v=+document.getElementById('pop-val').value;
+  if(!v||v<=0){document.getElementById('pop-val').style.borderColor='#A32D2D';return;}
+  document.getElementById('pop-val').style.borderColor='';
+  if(popoverTarget==='ang'){
+    document.getElementById('ex-deg').value=v;
+  } else if(popoverTarget==='a'){
+    document.getElementById('ex-known').value='opp';
+    document.getElementById('ex-knownv').value=v;
+  } else if(popoverTarget==='b'){
+    document.getElementById('ex-known').value='adj';
+    document.getElementById('ex-knownv').value=v;
+  } else if(popoverTarget==='c'){
+    document.getElementById('ex-known').value='hyp';
+    document.getElementById('ex-knownv').value=v;
+  }
+  closePopover();
+  // Refresh triangle preview
+  var deg=+document.getElementById('ex-deg').value;
+  var known=document.getElementById('ex-known').value;
+  var knownV=+document.getElementById('ex-knownv').value;
+  var find=document.getElementById('ex-find').value;
+  if(deg&&knownV&&known!==find){
+    curExProb={ang:'A',deg:deg,known:known,knownV:knownV,find:find};
+    drawExTriangle(curExProb);
+  }
+}
+document.addEventListener('click',function(e){
+  var pop=document.getElementById('popover');
+  if(pop.classList.contains('show')&&!pop.contains(e.target))closePopover();
+});
+
+// ─────────────────────────────────────────────
+// EXERCISE LOGIC
+// ─────────────────────────────────────────────
+var PROB_BASE=[
+  {id:1,ang:'A',deg:30,known:'hyp',knownV:10,find:'opp'},
+  {id:2,ang:'A',deg:50,known:'adj',knownV:8, find:'hyp'},
+  {id:3,ang:'A',deg:40,known:'opp',knownV:6, find:'adj'},
+  {id:4,ang:'A',deg:25,known:'hyp',knownV:12,find:'adj'},
+];
+var problems=PROB_BASE.slice();
+var curProb=0;
+var sidesOk={};
+var solveIdx=0,solveList=[];
+
 function sideName(s){return s==='opp'?'ניצב מול':s==='adj'?'ניצב ליד':'יתר';}
-function sideLetter(p,role){
-  if(role==='hyp') return 'c';
-  if(p.ang==='A') return role==='opp'?'a':'b';
-  return role==='opp'?'b':'a';
-}
+function sideLetter(p,role){if(role==='hyp')return'c';return role==='opp'?'a':'b';}
 function calcAns(p){
   var r=p.deg*Math.PI/180;
-  if(p.find==='opp') return p.knownV*(p.known==='hyp'?Math.sin(r):p.known==='adj'?Math.tan(r):1/Math.cos(r));
-  if(p.find==='adj') return p.knownV*(p.known==='hyp'?Math.cos(r):p.known==='opp'?1/Math.tan(r):1/Math.sin(r));
+  if(p.find==='opp')return p.knownV*(p.known==='hyp'?Math.sin(r):p.known==='adj'?Math.tan(r):1/Math.cos(r));
+  if(p.find==='adj')return p.knownV*(p.known==='hyp'?Math.cos(r):p.known==='opp'?1/Math.tan(r):1/Math.sin(r));
   return p.known==='opp'?p.knownV/Math.sin(r):p.knownV/Math.cos(r);
 }
 function corrFunc(p){
-  if((p.known==='hyp'&&p.find==='opp')||(p.known==='opp'&&p.find==='hyp')) return 'sin';
-  if((p.known==='hyp'&&p.find==='adj')||(p.known==='adj'&&p.find==='hyp')) return 'cos';
-  return 'tan';
+  if((p.known==='hyp'&&p.find==='opp')||(p.known==='opp'&&p.find==='hyp'))return'sin';
+  if((p.known==='hyp'&&p.find==='adj')||(p.known==='adj'&&p.find==='hyp'))return'cos';
+  return'tan';
 }
 
-// Problem list
-function buildProbBtns(){
-  document.getElementById('prob-btns').innerHTML=PROB_BASE.map(function(p,i){
-    return '<button class="prob-btn'+(i===curProb?' active':'')+'" onclick="loadProb('+i+')">תרגיל '+p.id+'</button>';
-  }).join('');
+function buildProbBtns(){}  // no preset buttons panel
+function randProb(){
+  var idx=Math.floor(Math.random()*PROB_BASE.length);
+  var p=PROB_BASE[idx];
+  document.getElementById('ex-deg').value=p.deg;
+  document.getElementById('ex-known').value=p.known;
+  document.getElementById('ex-knownv').value=p.knownV;
+  document.getElementById('ex-find').value=p.find;
+  startExercise();
 }
-function randProb(){loadProb(Math.floor(Math.random()*PROB_BASE.length));}
-function loadProb(idx){
-  curProb=idx; sidesOk={opp:false,adj:false,hyp:false}; solveIdx=0; solveList=[];
-  ctx={svg:'ex-svg',leg:'ex-leg',steps:'steps-flow',prog:'prog',success:'success-area'};
-  buildProbBtns();
-  drawExTri(PROB_BASE[idx],'ex-svg','ex-leg');
-  buildSteps(PROB_BASE[idx]);
-  updateProg(1);
-  document.getElementById('success-area').innerHTML='';
+function loadPreset(idx){randProb();}
+
+function startExercise(){
+  var deg=+document.getElementById('ex-deg').value;
+  var known=document.getElementById('ex-known').value;
+  var knownV=+document.getElementById('ex-knownv').value;
+  var find=document.getElementById('ex-find').value;
+  var err=document.getElementById('ex-err');
+  if(!deg||deg<5||deg>85){err.style.display='';err.textContent='הזן זווית בין 5 ל-85°';return;}
+  if(!knownV||knownV<=0){err.style.display='';err.textContent='ערך הצלע חייב להיות חיובי';return;}
+  if(known===find){err.style.display='';err.textContent='הצלע הנתונה והצלע לחישוב חייבות להיות שונות';return;}
+  err.style.display='none';
+  var p={ang:'A',deg:deg,known:known,knownV:knownV,find:find};
+  curExProb=p;
+  drawExTriangle(p);
 }
 
-// Build steps
-function buildSteps(p){
+function buildStepsHTML(p){
   var cf=corrFunc(p),ans=calcAns(p);
   var fv=cf==='sin'?Math.sin(p.deg*Math.PI/180):cf==='cos'?Math.cos(p.deg*Math.PI/180):Math.tan(p.deg*Math.PI/180);
   var fvs=fv.toFixed(4);
-  var fl=sideLetter(p,p.find), kl=sideLetter(p,p.known);
-  var angSym=p.ang==='A'?'α':'β';
-  // Correct letters per role
-  var corrLetts={opp:sideLetter(p,'opp'),adj:sideLetter(p,'adj'),hyp:'c'};
+  var fl=sideLetter(p,p.find),kl=sideLetter(p,p.known);
+  var corrLetts={opp:'a',adj:'b',hyp:'c'};
   var allLetts=['a','b','c'];
 
-  // Solve list
   if(p.find==='opp'||p.find==='adj'){
     solveList=[
-      {lbl:'משוואה מקורית',expr:cf+'('+p.deg+'°) = '+fl+' / '+p.knownV},
-      {lbl:'חישוב ערך הפונקציה',expr:fvs+' = '+fl+' / '+p.knownV},
+      {lbl:'משוואה מקורית',expr:cf+'(α) = '+fl+' / '+p.knownV},
+      {lbl:'חישוב ערך הפונקציה: '+cf+'('+p.deg+'°)',expr:fvs+' = '+fl+' / '+p.knownV},
       {lbl:'כפל שני הצדדים ב-'+p.knownV,expr:fl+' = '+fvs+' × '+p.knownV},
       {lbl:'תוצאה',expr:fl+' ≈ '+ans.toFixed(2)},
     ];
   } else {
     solveList=[
-      {lbl:'משוואה מקורית',expr:cf+'('+p.deg+'°) = '+p.knownV+' / '+fl},
+      {lbl:'משוואה מקורית',expr:cf+'(α) = '+p.knownV+' / '+fl},
       {lbl:'חישוב ערך הפונקציה',expr:fvs+' = '+p.knownV+' / '+fl},
       {lbl:fl+' לצד שני',expr:fl+' = '+p.knownV+' / '+fvs},
       {lbl:'תוצאה',expr:fl+' ≈ '+ans.toFixed(2)},
@@ -521,93 +772,69 @@ function buildSteps(p){
   }
   solveIdx=0;
 
-  function mkSideBtns(role){
+  function mkBtns(role){
     return allLetts.map(function(lt){
-      return '<button class="side-btn" data-role="'+role+'" data-val="'+lt+'" '+
-        'onclick="checkSide(\''+role+'\',\''+lt+'\',\''+corrLetts[role]+'\',\''+angSym+'\')">'+ lt +'</button>';
+      return '<button class="side-btn" data-role="'+role+'" data-val="'+lt+'" onclick="checkSide(\''+role+'\',\''+lt+'\',\''+corrLetts[role]+'\')">'+lt+'</button>';
     }).join('');
   }
-
-  var html=
-    '<div class="step-box" id="sbox-1">'+
-    '<div class="step-hdr"><div class="step-num active" id="sn-1">1</div>'+
-    '<div class="step-title">זיהוי הצלעות ביחס לזווית '+angSym+'</div></div>'+
-    '<div class="step-body open" id="sb-1">'+
-    '<div style="font-size:13px;color:#555;margin-bottom:10px">סמן כל צלע לפי תפקידה ביחס לזווית <strong>'+angSym+'</strong>.<br>נתון: <strong>'+sideName(p.known)+' ('+kl+')</strong> | מחפשים: <strong>'+sideName(p.find)+' ('+fl+')</strong></div>'+
-    '<div id="q-opp" style="margin-bottom:10px">'+
-      '<div class="q-label">איזו צלע היא <strong>ניצב מול</strong> זווית '+angSym+'?</div>'+
-      '<div class="side-btns">'+mkSideBtns('opp')+'</div><div id="fb-opp"></div></div>'+
-    '<div id="q-adj" style="display:none;margin-bottom:10px">'+
-      '<div class="q-label">איזו צלע היא <strong>ניצב ליד</strong> זווית '+angSym+'?</div>'+
-      '<div class="side-btns">'+mkSideBtns('adj')+'</div><div id="fb-adj"></div></div>'+
-    '<div id="q-hyp" style="display:none;margin-bottom:10px">'+
-      '<div class="q-label">איזו צלע היא <strong>יתר</strong>?</div>'+
-      '<div class="side-btns">'+mkSideBtns('hyp')+'</div><div id="fb-hyp"></div></div>'+
-    '<button class="next-btn" id="next-1" disabled onclick="goStep(2)">המשך לבחירת פונקציה ←</button>'+
-    '</div></div>'+
-
-    '<div class="step-box" id="sbox-2">'+
-    '<div class="step-hdr"><div class="step-num" id="sn-2">2</div>'+
-    '<div class="step-title">בחירת הפונקציה הטריגונומטרית</div></div>'+
-    '<div class="step-body" id="sb-2">'+
-    '<div style="font-size:13px;color:#555;margin-bottom:10px">נתון: <strong>'+sideName(p.known)+' ('+kl+')</strong> | מחפשים: <strong>'+sideName(p.find)+' ('+fl+')</strong><br>איזו פונקציה מקשרת ביניהן?</div>'+
-    '<div class="func-btns">'+
-      '<button class="func-btn" id="fn-sin" onclick="checkFunc(\'sin\',\''+cf+'\')">sin = ניצב מול / יתר</button>'+
-      '<button class="func-btn" id="fn-cos" onclick="checkFunc(\'cos\',\''+cf+'\')">cos = ניצב ליד / יתר</button>'+
-      '<button class="func-btn" id="fn-tan" onclick="checkFunc(\'tan\',\''+cf+'\')">tan = ניצב מול / ניצב ליד</button>'+
-    '</div><div id="fb-func"></div>'+
-    '<button class="next-btn" id="next-2" disabled onclick="goStep(3)">המשך לבניית משוואה ←</button>'+
-    '</div></div>'+
-
-    '<div class="step-box" id="sbox-3">'+
-    '<div class="step-hdr"><div class="step-num" id="sn-3">3</div>'+
-    '<div class="step-title">בניית המשוואה</div></div>'+
-    '<div class="step-body" id="sb-3">'+
-    '<div style="font-size:13px;color:#555;margin-bottom:8px"><strong>'+fl+'</strong> = הצלע שמחפשים ('+sideName(p.find)+'):</div>'+
-    '<div class="eq-box" id="eq-disp"></div>'+
-    '<div id="fb-eq" class="fb info" style="margin-top:8px">'+fl+' מייצג את '+sideName(p.find)+'. הצב את הנתונים ובדוק שהמשוואה מובנת.</div>'+
-    '<button class="next-btn" id="next-3" onclick="goStep(4)">המשך לפתרון ←</button>'+
-    '</div></div>'+
-
-    '<div class="step-box" id="sbox-4">'+
-    '<div class="step-hdr"><div class="step-num" id="sn-4">4</div>'+
-    '<div class="step-title">פתרון שלב אחר שלב</div></div>'+
-    '<div class="step-body" id="sb-4">'+
-    '<div id="solve-area"></div>'+
-    '<button class="reveal-btn" id="rev-btn" onclick="revealStep()">גלה שלב הבא ▼</button>'+
-    '</div></div>';
-
-  document.getElementById(ctx.steps).innerHTML=html;
-
-  // Equation
+  var angSym='α';
   var kv='<span style="color:#1a1a1a">'+p.knownV+'</span>';
   var xv='<span class="eq-x">'+fl+'</span>';
   var eq;
-  if(cf==='sin') eq='sin('+angSym+') = '+(p.find==='opp'?xv+' / '+kv:kv+' / '+xv);
-  else if(cf==='cos') eq='cos('+angSym+') = '+(p.find==='adj'?xv+' / '+kv:kv+' / '+xv);
-  else eq='tan('+angSym+') = '+(p.find==='opp'?xv+' / '+kv:kv+' / '+xv);
-  document.getElementById('eq-disp').innerHTML=eq;
+  if(cf==='sin') eq='sin(α) = '+(p.find==='opp'?xv+' / '+kv:kv+' / '+xv);
+  else if(cf==='cos') eq='cos(α) = '+(p.find==='adj'?xv+' / '+kv:kv+' / '+xv);
+  else eq='tan(α) = '+(p.find==='opp'?xv+' / '+kv:kv+' / '+xv);
+
+  document.getElementById('steps-flow').innerHTML=
+    step(1,true,'זיהוי הצלעות ביחס לזווית α',
+      '<div style="font-size:12px;color:#555;margin-bottom:9px">נתון: <strong>'+sideName(p.known)+' ('+kl+')</strong> | מחפשים: <strong>'+sideName(p.find)+' ('+fl+')</strong></div>'+
+      '<div id="q-opp" style="margin-bottom:8px"><div class="q-label">ניצב מול?</div><div class="side-btns">'+mkBtns('opp')+'</div><div id="fb-opp"></div></div>'+
+      '<div id="q-adj" style="display:none;margin-bottom:8px"><div class="q-label">ניצב ליד?</div><div class="side-btns">'+mkBtns('adj')+'</div><div id="fb-adj"></div></div>'+
+      '<div id="q-hyp" style="display:none;margin-bottom:8px"><div class="q-label">יתר?</div><div class="side-btns">'+mkBtns('hyp')+'</div><div id="fb-hyp"></div></div>'+
+      '<button class="next-btn" id="next-1" disabled onclick="goStep(2)">בחירת פונקציה ←</button>')+
+    step(2,false,'בחירת הפונקציה הטריגונומטרית',
+      '<div style="font-size:12px;color:#555;margin-bottom:8px">איזו פונקציה מקשרת בין <strong>'+sideName(p.known)+'</strong> ל<strong>'+sideName(p.find)+'</strong>?</div>'+
+      '<div class="func-btns">'+
+        '<button class="func-btn" id="fn-sin" onclick="checkFunc(\'sin\',\''+cf+'\')">sin = ניצב מול / יתר</button>'+
+        '<button class="func-btn" id="fn-cos" onclick="checkFunc(\'cos\',\''+cf+'\')">cos = ניצב ליד / יתר</button>'+
+        '<button class="func-btn" id="fn-tan" onclick="checkFunc(\'tan\',\''+cf+'\')">tan = ניצב מול / ניצב ליד</button>'+
+      '</div><div id="fb-func"></div>'+
+      '<button class="next-btn" id="next-2" disabled onclick="goStep(3)">בניית משוואה ←</button>')+
+    step(3,false,'בניית המשוואה',
+      '<div style="font-size:12px;color:#555;margin-bottom:6px"><strong>'+fl+'</strong> = '+sideName(p.find)+' (מה שמחפשים)</div>'+
+      '<div class="eq-box">'+eq+'</div>'+
+      '<div class="fb info" style="margin-top:6px">הצב את הנתונים ובדוק שהמשוואה הגיונית.</div>'+
+      '<button class="next-btn" onclick="goStep(4)">פתרון ←</button>')+
+    step(4,false,'פתרון שלב אחר שלב',
+      '<div id="solve-area"></div>'+
+      '<button class="reveal-btn" id="rev-btn" onclick="revealStep()">גלה שלב הבא ▼</button>');
 }
 
-function checkSide(role,chosen,correct,angSym){
+function step(n,open,title,body){
+  return '<div class="step-box" id="sbox-'+n+'">'+
+    '<div class="step-hdr"><div class="step-num'+(open?' active':'')+'" id="sn-'+n+'">'+n+'</div>'+
+    '<div class="step-title">'+title+'</div></div>'+
+    '<div class="step-body'+(open?' open':'')+'" id="sb-'+n+'">'+body+'</div></div>';
+}
+
+function checkSide(role,chosen,correct){
   var btns=document.querySelectorAll('[data-role="'+role+'"]');
   if(chosen!==correct){
     var wb=[].filter.call(btns,function(b){return b.dataset.val===chosen;})[0];
     if(wb){wb.classList.add('wrong');setTimeout(function(){wb.classList.remove('wrong');},900);}
-    var tips={opp:'הניצב מול הוא הצלע שממול לזווית '+angSym+' — אינה נוגעת בה.',adj:'הניצב ליד נוגע בזווית '+angSym+' אך אינו היתר.',hyp:'היתר c היא תמיד הצלע הגדולה ביותר, מול זווית 90° בקודקוד C.'};
-    document.getElementById('fb-'+role).innerHTML='<div class="fb err">לא נכון. '+tips[role]+' נסה שוב!</div>';
-    return;
+    var tips={opp:'הניצב מול אינו נוגע בזווית α — הוא ממולה.',adj:'הניצב ליד נוגע בזווית α אך אינו היתר.',hyp:'היתר (c) היא תמיד הצלע הגדולה, מול 90°.'};
+    document.getElementById('fb-'+role).innerHTML='<div class="fb err">לא נכון. '+tips[role]+' נסה שוב!</div>';return;
   }
   [].forEach.call(btns,function(b){b.disabled=true;if(b.dataset.val===correct)b.classList.add('correct');});
-  var msgs={opp:'נכון! ניצב מול מסומן בסגול.',adj:'נכון! ניצב ליד מסומן בירוק.',hyp:'נכון! יתר c מסומנת באדום.'};
+  var msgs={opp:'נכון! ניצב מול = סגול.',adj:'נכון! ניצב ליד = ירוק.',hyp:'נכון! יתר = אדום.'};
   document.getElementById('fb-'+role).innerHTML='<div class="fb ok">'+msgs[role]+'</div>';
   sidesOk[role]=true;
   var order=['opp','adj','hyp'],idx=order.indexOf(role);
-  if(idx<2) setTimeout(function(){var n=document.getElementById('q-'+order[idx+1]);if(n)n.style.display='block';},500);
+  if(idx<2)setTimeout(function(){var n=document.getElementById('q-'+order[idx+1]);if(n)n.style.display='block';},500);
   if(sidesOk.opp&&sidesOk.adj&&sidesOk.hyp){
     setTimeout(function(){
       var el=document.getElementById('fb-hyp');
-      if(el) el.innerHTML+='<div class="fb info" style="margin-top:6px">מצוין! זיהית את כל הצלעות. המשך לבחירת פונקציה.</div>';
+      if(el)el.innerHTML+='<div class="fb info" style="margin-top:5px">מצוין! זיהית את כל הצלעות.</div>';
       var nx=document.getElementById('next-1');if(nx)nx.disabled=false;
     },400);
   }
@@ -620,28 +847,24 @@ function checkFunc(chosen,correct){
   if(chosen!==correct){
     document.getElementById('fn-'+chosen).classList.add('wrong');
     var tips={sin:'sin = ניצב מול / יתר',cos:'cos = ניצב ליד / יתר',tan:'tan = ניצב מול / ניצב ליד'};
-    document.getElementById('fb-func').innerHTML='<div class="fb err">לא זו הפונקציה. הנכונה: <strong>'+tips[correct]+'</strong></div>';
-    btns.forEach(function(b){b.disabled=false;});
-    document.getElementById('fn-'+chosen).disabled=true;
-    return;
+    document.getElementById('fb-func').innerHTML='<div class="fb err">לא זו. הנכונה: <strong>'+tips[correct]+'</strong></div>';
+    btns.forEach(function(b){b.disabled=false;});document.getElementById('fn-'+chosen).disabled=true;return;
   }
-  document.getElementById('fb-func').innerHTML='<div class="fb ok">נכון! '+correct+' מתאימה לצלעות הנתונות.</div>';
+  document.getElementById('fb-func').innerHTML='<div class="fb ok">נכון! '+correct+' מתאימה.</div>';
   document.getElementById('next-2').disabled=false;
 }
 
 function goStep(n){
-  var p=n-1;
-  var pb=document.getElementById('sb-'+p),pn=document.getElementById('sn-'+p);
+  var pb=document.getElementById('sb-'+(n-1)),pn=document.getElementById('sn-'+(n-1));
   if(pb)pb.classList.remove('open');
   if(pn){pn.classList.remove('active');pn.classList.add('done');pn.textContent='✓';}
   var nb=document.getElementById('sb-'+n),nn=document.getElementById('sn-'+n);
-  if(nb)nb.classList.add('open');
-  if(nn)nn.classList.add('active');
+  if(nb)nb.classList.add('open');if(nn)nn.classList.add('active');
   updateProg(n);
 }
 
 function revealStep(){
-  if(solveIdx>=solveList.length) return;
+  if(solveIdx>=solveList.length)return;
   var s=solveList[solveIdx];
   var el=document.createElement('div');
   el.className='solve-step shown'+(solveIdx===solveList.length-1?' last-shown':'');
@@ -653,16 +876,14 @@ function revealStep(){
     var sn4=document.getElementById('sn-4');
     if(sn4){sn4.classList.remove('active');sn4.classList.add('done');sn4.textContent='✓';}
     updateProg(5);
-    var p=problems[curProb];
-    document.getElementById(ctx.success).innerHTML=
-      '<div class="success-box">כל הכבוד! פתרת את התרגיל בהצלחה.'+
-      '<span>'+sideName(p.find)+' ('+sideLetter(p,p.find)+') ≈ '+calcAns(p).toFixed(2)+'</span></div>';
+    document.getElementById('success-area').innerHTML=
+      '<div class="success-box">כל הכבוד! פתרת בהצלחה.'+
+      '<span>'+sideName(curExProb.find)+' ('+sideLetter(curExProb,curExProb.find)+') ≈ '+calcAns(curExProb).toFixed(2)+'</span></div>';
   }
 }
 
 function updateProg(activeStep){
-  var bar=document.getElementById(ctx.prog);
-  if(!bar) return;
+  var bar=document.getElementById('prog');if(!bar)return;
   var dots=bar.querySelectorAll('.dot-step');
   if(dots.length===0){
     [1,2,3,4].forEach(function(){var d=document.createElement('div');d.className='dot-step';bar.appendChild(d);});
@@ -670,41 +891,25 @@ function updateProg(activeStep){
   }
   [].forEach.call(dots,function(d,i){
     d.classList.remove('done','active');
-    if(i+1<activeStep) d.classList.add('done');
-    else if(i+1===activeStep) d.classList.add('active');
+    if(i+1<activeStep)d.classList.add('done');
+    else if(i+1===activeStep)d.classList.add('active');
   });
 }
 
-// Custom input
-function startCustom(){
-  var ang=document.getElementById('c-angvert').value;
-  var deg=+document.getElementById('c-deg').value;
-  var known=document.getElementById('c-known').value;
-  var knownV=+document.getElementById('c-knownv').value;
-  var find=document.getElementById('c-find').value;
-  var err=document.getElementById('custom-err');
-  if(deg<=4||deg>=86){err.style.display='';err.textContent='הזן זווית בין 5 ל-85 מעלות.';return;}
-  if(knownV<=0){err.style.display='';err.textContent='ערך הצלע חייב להיות חיובי.';return;}
-  if(known===find){err.style.display='';err.textContent='הצלע הנתונה והצלע לחישוב חייבות להיות שונות.';return;}
-  err.style.display='none';
-  var p={id:'מותאם',ang:ang,deg:deg,known:known,knownV:knownV,find:find};
-  problems=[p]; curProb=0;
-  sidesOk={opp:false,adj:false,hyp:false}; solveIdx=0; solveList=[];
-  ctx={svg:'cx-svg',leg:'cx-leg',steps:'csteps-flow',prog:'cprog',success:'csuccess-area'};
-  document.getElementById('custom-exercise').style.display='';
-  document.getElementById('csteps-flow').innerHTML='';
-  document.getElementById('csuccess-area').innerHTML='';
-  drawExTri(p,'cx-svg','cx-leg');
-  buildSteps(p);
-  updateProg(1);
-}
-function resetCustom(){
-  problems=PROB_BASE.slice(); curProb=0;
-  ctx={svg:'ex-svg',leg:'ex-leg',steps:'steps-flow',prog:'prog',success:'success-area'};
-  document.getElementById('custom-exercise').style.display='none';
+function switchTab(t,btn){
+  document.querySelectorAll('.tab-content').forEach(function(e){e.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(e){e.classList.remove('active');});
+  document.getElementById('tab-'+t).classList.add('active');
+  btn.classList.add('active');
 }
 
-buildProbBtns(); loadProb(0); updateGen();
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+buildOrientBtns();
+buildProbBtns();
+drawExTriangleBlank();
+updateGen();
 </script>
 </body>
 </html>
